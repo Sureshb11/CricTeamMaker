@@ -47,3 +47,28 @@ export async function deleteMatch(id: number) {
         console.error('Failed to delete match:', error);
     }
 }
+
+export async function updateMatchResult(formData: FormData) {
+    const id = formData.get('id') as string;
+    const home_team = formData.get('home_team') as string;
+    const away_team = formData.get('away_team') as string;
+    const date = formData.get('date') as string;
+    const venue = formData.get('venue') as string;
+    const result = formData.get('result') as string;
+    const score = formData.get('score') as string;
+
+    try {
+        await db.execute({
+            sql: `
+            UPDATE matches 
+            SET home_team = ?, away_team = ?, date = ?, venue = ?, result = ?, score = ?
+            WHERE id = ?
+            `,
+            args: [home_team, away_team, date, venue, result, score, id]
+        });
+        revalidatePath('/matches');
+        revalidatePath('/admin/matches');
+    } catch (error) {
+        console.error('Failed to update match:', error);
+    }
+}
