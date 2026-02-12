@@ -127,10 +127,19 @@ export default function TeamList({ players }: { players: any[] }) {
                                             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                                                 Exp: {player.experience_level}
                                             </p>
-                                            <div style={{ marginTop: '10px', display: 'flex', gap: '10px', fontSize: '0.8rem', color: '#888' }}>
-                                                <span>Matches: {player.matches_played || 0}</span>
-                                                <span>Runs: {player.total_runs || 0}</span>
-                                                <span>Wkts: {player.total_wickets || 0}</span>
+                                            <div className={styles.stats}>
+                                                <div className={styles.stat}>
+                                                    <span className={styles.statLabel}>Matches</span>
+                                                    <span className={styles.statValue}>{player.matches_played || 0}</span>
+                                                </div>
+                                                <div className={styles.stat}>
+                                                    <span className={styles.statLabel}>Runs</span>
+                                                    <span className={styles.statValue}>{player.total_runs || 0}</span>
+                                                </div>
+                                                <div className={styles.stat}>
+                                                    <span className={styles.statLabel}>Wickets</span>
+                                                    <span className={styles.statValue}>{player.total_wickets || 0}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

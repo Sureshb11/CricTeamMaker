@@ -105,3 +105,75 @@
     background-color: #1a1a1a;
     color: white;
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .playerCard {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
+        min-height: 100px;
+    }
+
+    .imageContainer {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+        border-radius: 50%;
+        margin-right: 15px;
+        background: #222;
+        border: 1px solid var(--border-color);
+    }
+
+    .playerImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .info {
+        padding: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .name {
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+        line-height: 1.2;
+    }
+
+    .role {
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+    }
+
+    .info p {
+        font-size: 0.8rem !important;
+        margin-bottom: 4px;
+    }
+
+    .stats {
+        padding-top: 8px;
+        margin-top: 4px;
+        gap: 15px;
+        justify-content: flex-start;
+    }
+
+    .statValue {
+        font-size: 0.9rem;
+    }
+
+    .statLabel {
+        font-size: 0.6rem;
+    }
+}
