@@ -91,3 +91,17 @@
     font-size: 1.1rem;
     font-weight: 700;
 }
+
+.filterSelect {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: white;
+    font-family: inherit;
+}
+
+.filterSelect option {
+    background-color: #1a1a1a;
+    color: white;
+}

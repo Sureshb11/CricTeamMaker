@@ -44,6 +44,11 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
+.select option {
+    background-color: #1a1a1a;
+    color: white;
+}
+
 .button {
     width: 100%;
     padding: 14px;

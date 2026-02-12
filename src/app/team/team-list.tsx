@@ -64,13 +64,7 @@ export default function TeamList({ players }: { players: any[] }) {
                 <select
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
-                    style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid #333',
-                        background: '#1a1a1a',
-                        color: 'white'
-                    }}
+                    className={styles.filterSelect}
                 >
                     {uniqueRoles.map(role => (
                         <option key={role} value={role}>{role}</option>
@@ -80,13 +74,7 @@ export default function TeamList({ players }: { players: any[] }) {
                 <select
                     value={teamFilter}
                     onChange={(e) => setTeamFilter(e.target.value)}
-                    style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid #333',
-                        background: '#1a1a1a',
-                        color: 'white'
-                    }}
+                    className={styles.filterSelect}
                 >
                     <option value="All">All Teams</option>
                     {uniqueTeams.map(team => (
