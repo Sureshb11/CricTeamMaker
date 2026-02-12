@@ -1,0 +1,96 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.title {
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+.matchCard {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.matchCard:hover {
+    transform: translateX(5px);
+    border-color: var(--primary-color);
+}
+
+.matchInfo {
+    flex: 1;
+}
+
+.date {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.opponent {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.venue {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.result {
+    text-align: right;
+    min-width: 150px;
+}
+
+.score {
+    font-size: 1.8rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.outcome {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.win {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.loss {
+    background: rgba(255, 82, 82, 0.1);
+    color: #ff5252;
+    border: 1px solid #ff5252;
+}
+
+.pending {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}

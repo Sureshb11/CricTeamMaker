@@ -1,0 +1,153 @@
+'use client';
+
+import { useState } from 'react';
+import styles from './page.module.css';
+
+export default function TeamList({ players }: { players: any[] }) {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('All');
+    const [teamFilter, setTeamFilter] = useState('All');
+
+    // Get unique teams and roles for dropdowns
+    const uniqueTeams = Array.from(new Set(players.map(p => p.team_name || 'Unassigned'))).sort();
+    const uniqueRoles = ['All', 'Batsman', 'Bowler', 'All-Rounder', 'Wicket-Keeper'];
+
+    // Filter Logic
+    const filteredPlayers = players.filter(player => {
+        const matchesSearch = player.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesRole = roleFilter === 'All' || player.playing_role === roleFilter;
+        const matchesTeam = teamFilter === 'All' || (player.team_name || 'Unassigned') === teamFilter;
+        return matchesSearch && matchesRole && matchesTeam;
+    });
+
+    // Group filtered players by team for display
+    const groupedTeams: { [key: string]: { players: any[], logo_url: string | null } } = {};
+    filteredPlayers.forEach(player => {
+        const teamName = player.team_name || "Unassigned";
+        if (!groupedTeams[teamName]) {
+            groupedTeams[teamName] = {
+                players: [],
+                logo_url: player.logo_url
+            };
+        }
+        groupedTeams[teamName].players.push(player);
+    });
+
+    return (
+        <div>
+            {/* Search & Filter Controls */}
+            <div style={{
+                marginBottom: '40px',
+                display: 'flex',
+                gap: '15px',
+                flexWrap: 'wrap',
+                background: 'rgba(255,255,255,0.05)',
+                padding: '20px',
+                borderRadius: '12px'
+            }}>
+                <input
+                    type="text"
+                    placeholder="Search player name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                        flex: 1,
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid #333',
+                        background: '#1a1a1a',
+                        color: 'white',
+                        minWidth: '200px'
+                    }}
+                />
+
+                <select
+                    value={roleFilter}
+                    onChange={(e) => setRoleFilter(e.target.value)}
+                    style={{
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid #333',
+                        background: '#1a1a1a',
+                        color: 'white'
+                    }}
+                >
+                    {uniqueRoles.map(role => (
+                        <option key={role} value={role}>{role}</option>
+                    ))}
+                </select>
+
+                <select
+                    value={teamFilter}
+                    onChange={(e) => setTeamFilter(e.target.value)}
+                    style={{
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid #333',
+                        background: '#1a1a1a',
+                        color: 'white'
+                    }}
+                >
+                    <option value="All">All Teams</option>
+                    {uniqueTeams.map(team => (
+                        <option key={team} value={team}>{team}</option>
+                    ))}
+                </select>
+            </div>
+
+            {/* Registered Teams Section */}
+            {Object.keys(groupedTeams).length > 0 ? (
+                <div>
+                    {Object.entries(groupedTeams).map(([teamName, { players, logo_url }]) => (
+                        <div key={teamName} style={{ marginBottom: '60px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px', borderBottom: '1px solid var(--primary-color)', paddingBottom: '15px' }}>
+                                {logo_url && (
+                                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', background: '#222', border: '2px solid var(--primary-color)', flexShrink: 0 }}>
+                                        <img src={logo_url} alt={`${teamName} Logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    </div>
+                                )}
+                                <h3 style={{
+                                    fontSize: '2rem',
+                                    color: 'var(--text-main)',
+                                    margin: 0
+                                }}>
+                                    {teamName}
+                                </h3>
+                            </div>
+
+                            <div className={styles.grid}>
+                                {players.map((player) => (
+                                    <div key={player.id} className={styles.playerCard}>
+                                        <div className={styles.imageContainer} style={{ background: '#1e1e1e' }}>
+                                            <img
+                                                src={player.photo_url || `https://placehold.co/400x400/1a1a1a/00ff88?text=${player.full_name?.[0] || 'P'}+${player.full_name?.split(' ')[1]?.[0] || ''}`}
+                                                alt={player.full_name}
+                                                className={styles.playerImage}
+                                            />
+                                        </div>
+                                        <div className={styles.info}>
+                                            <span className={styles.role}>{player.playing_role}</span>
+                                            <h2 className={styles.name}>{player.full_name}</h2>
+                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                                Exp: {player.experience_level}
+                                            </p>
+                                            <div style={{ marginTop: '10px', display: 'flex', gap: '10px', fontSize: '0.8rem', color: '#888' }}>
+                                                <span>Matches: {player.matches_played || 0}</span>
+                                                <span>Runs: {player.total_runs || 0}</span>
+                                                <span>Wkts: {player.total_wickets || 0}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div style={{ textAlign: 'center', marginTop: '50px', color: 'var(--text-muted)' }}>
+                    <p>No players match your search.</p>
+                </div>
+            )}
+        </div>
+    );
+}
