@@ -21,6 +21,7 @@ export async function checkEmailExists(email: string) {
 }
 
 export async function initiateRegistration(prevState: any, formData: FormData) {
+    console.log('Initiating Registration...');
     const full_name = formData.get('full_name') as string;
     const email = formData.get('email') as string;
     const phone = formData.get('phone') as string;
@@ -109,7 +110,7 @@ export async function initiateRegistration(prevState: any, formData: FormData) {
         return { success: true, step: 'verify', email: email, message: 'OTP sent to your email.', inputs };
 
     } catch (error) {
-        console.error(error);
+        console.error('Registration System Error:', error);
         return { error: 'System error. Please try again.', step: 'details', inputs };
     }
 }
