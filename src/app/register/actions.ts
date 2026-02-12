@@ -98,8 +98,13 @@ export async function initiateRegistration(prevState: any, formData: FormData) {
             args: [email, otp, expiresAt, registrationData, otp, expiresAt, registrationData]
         });
 
-        // Send Email (Non-blocking)
-        sendOtpEmail(email, otp).catch(err => console.error('Failed to send OTP email:', err));
+        // Send Email (Must await in serverless)
+        try {
+            await sendOtpEmail(email, otp);
+        } catch (error) {
+            console.error('Failed to send OTP email:', error);
+            return { error: 'Failed to send verification email. Please try again.', step: 'details', inputs };
+        }
 
         return { success: true, step: 'verify', email: email, message: 'OTP sent to your email.', inputs };
 

@@ -40,8 +40,13 @@ export async function requestOtp(prevState: any, formData: FormData) {
         args: [email, otp, expiresAt, otp, expiresAt]
     });
 
-    // Send Email (Non-blocking for speed)
-    sendOtpEmail(email, otp, 'login').catch(err => console.error('Background email failed:', err));
+    // Send Email (Must await in serverless to ensure execution)
+    try {
+        await sendOtpEmail(email, otp, 'login');
+    } catch (error) {
+        console.error('Failed to send OTP email:', error);
+        return { error: 'Failed to send OTP. Please try again.', step: 'email' };
+    }
 
     // Instant return for better UI UX
     return { success: true, email, step: 'otp' };
