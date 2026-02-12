@@ -11,7 +11,11 @@ export default async function EditProfilePage() {
         redirect('/login');
     }
 
-    const user = db.prepare('SELECT * FROM registrations WHERE id = ?').get(session.userId) as any;
+    const result = await db.execute({
+        sql: 'SELECT * FROM registrations WHERE id = ?',
+        args: [session.userId]
+    });
+    const user = result.rows[0] as any;
 
     if (!user) {
         redirect('/login');

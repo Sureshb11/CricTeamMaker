@@ -30,7 +30,10 @@ export default async function ManageStats() {
                     <tbody>
                         {players.map(player => (
                             <tr key={player.id} style={{ borderBottom: '1px solid #333' }}>
-                                <form action={updatePlayerStats}>
+                                <form action={async (formData) => {
+                                    'use server';
+                                    await updatePlayerStats(formData);
+                                }}>
                                     <input type="hidden" name="id" value={player.id} />
                                     <td style={{ padding: '15px' }}>
                                         <div style={{ fontWeight: 'bold' }}>{player.full_name}</div>

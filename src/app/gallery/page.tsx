@@ -2,7 +2,8 @@ import styles from './page.module.css';
 import db from '@/lib/db';
 
 async function getImages() {
-    return db.prepare('SELECT * FROM gallery_images ORDER BY created_at DESC').all() as any[];
+    const result = await db.execute('SELECT * FROM gallery_images ORDER BY created_at DESC');
+    return result.rows as any[];
 }
 
 export default async function GalleryPage() {

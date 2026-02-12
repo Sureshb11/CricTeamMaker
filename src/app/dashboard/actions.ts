@@ -58,17 +58,23 @@ export async function updateProfile(prevState: any, formData: FormData) {
 
     try {
         if (photo_url) {
-            db.prepare(`
+            await db.execute({
+                sql: `
                 UPDATE registrations 
                 SET phone = ?, playing_role = ?, experience_level = ?, photo_url = ?
                 WHERE id = ?
-            `).run(phone, playing_role, experience_level, photo_url, session.userId);
+                `,
+                args: [phone, playing_role, experience_level, photo_url, session.userId]
+            });
         } else {
-            db.prepare(`
+            await db.execute({
+                sql: `
                 UPDATE registrations 
                 SET phone = ?, playing_role = ?, experience_level = ?
                 WHERE id = ?
-            `).run(phone, playing_role, experience_level, session.userId);
+                `,
+                args: [phone, playing_role, experience_level, session.userId]
+            });
         }
 
         revalidatePath('/dashboard');

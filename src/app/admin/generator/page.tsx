@@ -9,7 +9,7 @@ async function getPlayers() {
 
 async function getTeams() {
     const result = await db.execute('SELECT name FROM teams ORDER BY name ASC');
-    return result.rows as { name: string }[];
+    return result.rows as unknown as { name: string }[];
 }
 
 export default async function GeneratorPage() {

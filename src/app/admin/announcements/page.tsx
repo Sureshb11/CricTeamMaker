@@ -17,7 +17,10 @@ export default async function ManageAnnouncements() {
             {/* Post Announcement Form */}
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '12px', marginBottom: '40px' }}>
                 <h2 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>Post New Announcement</h2>
-                <form action={createAnnouncement}>
+                <form action={async (formData) => {
+                    'use server';
+                    await createAnnouncement(formData);
+                }}>
                     <div className={styles.formGroup}>
                         <label className={styles.label}>Title</label>
                         <input type="text" name="title" className={styles.input} placeholder="e.g. Practice Cancelled" required />

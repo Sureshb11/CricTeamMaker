@@ -13,7 +13,11 @@ export default async function AdminLayout({
         redirect('/login');
     }
 
-    const user = db.prepare('SELECT role FROM registrations WHERE id = ?').get(session.userId) as any;
+    const result = await db.execute({
+        sql: 'SELECT role FROM registrations WHERE id = ?',
+        args: [session.userId]
+    });
+    const user = result.rows[0] as any;
 
     if (!user || user.role !== 'admin') {
         redirect('/'); // Redirect non-admins to home

@@ -180,5 +180,14 @@ async function verifyAndRegister(prevState: any, formData: FormData) {
     }
 
     // Redirect to Home (Dashboard) after successful registration and auto-login
+    // Redirect to Home (Dashboard) after successful registration and auto-login
     redirect('/');
+}
+
+export async function registerPlayer(prevState: any, formData: FormData) {
+    const step = formData.get('step') as string;
+    if (step === 'verify') {
+        return verifyAndRegister(prevState, formData);
+    }
+    return initiateRegistration(prevState, formData);
 }

@@ -7,7 +7,11 @@ export default async function Navbar() {
     const session = await getSession();
     let user = null;
     if (session) {
-        user = db.prepare('SELECT full_name FROM registrations WHERE id = ?').get(session.userId) as any;
+        const result = await db.execute({
+            sql: 'SELECT full_name FROM registrations WHERE id = ?',
+            args: [session.userId]
+        });
+        user = result.rows[0] as any;
     }
     return (
         <nav className={`container ${styles.navbar}`}>

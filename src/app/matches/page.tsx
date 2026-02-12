@@ -2,8 +2,8 @@ import styles from './page.module.css';
 import db from '@/lib/db';
 
 async function getMatches() {
-    const stmt = db.prepare('SELECT * FROM matches ORDER BY date DESC');
-    return stmt.all() as any[];
+    const result = await db.execute('SELECT * FROM matches ORDER BY date DESC');
+    return result.rows as any[];
 }
 
 export default async function MatchesPage() {

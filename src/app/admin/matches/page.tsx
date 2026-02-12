@@ -23,7 +23,10 @@ export default async function ManageMatches() {
 
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '12px', marginBottom: '40px' }}>
                 <h2 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>Add New Match</h2>
-                <form action={addMatch}>
+                <form action={async (formData) => {
+                    'use server';
+                    await addMatch(formData);
+                }}>
                     {/* ... (Form fields remain same as existing) ... */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                         <div className={styles.formGroup}>

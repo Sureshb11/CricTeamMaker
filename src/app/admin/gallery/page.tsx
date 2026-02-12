@@ -17,7 +17,10 @@ export default async function ManageGallery() {
             {/* Upload Form */}
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '12px', marginBottom: '40px' }}>
                 <h2 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>Upload New Photo</h2>
-                <form action={uploadGalleryImage}>
+                <form action={async (formData) => {
+                    'use server';
+                    await uploadGalleryImage(formData);
+                }}>
                     <div className={styles.formGroup}>
                         <label className={styles.label}>Caption (Optional)</label>
                         <input type="text" name="caption" className={styles.input} placeholder="e.g. Winning Moment 2024" />
