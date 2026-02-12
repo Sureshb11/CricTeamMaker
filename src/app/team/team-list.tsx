@@ -42,8 +42,9 @@ export default function TeamList({ players }: { players: any[] }) {
                 gap: '15px',
                 flexWrap: 'wrap',
                 background: 'rgba(255,255,255,0.05)',
-                padding: '20px',
-                borderRadius: '12px'
+                padding: 'clamp(15px, 4vw, 25px)',
+                borderRadius: '12px',
+                alignItems: 'stretch'
             }}>
                 <input
                     type="text"
@@ -51,13 +52,12 @@ export default function TeamList({ players }: { players: any[] }) {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{
-                        flex: 1,
+                        flex: '1 1 250px',
                         padding: '12px',
                         borderRadius: '8px',
                         border: '1px solid #333',
                         background: '#1a1a1a',
-                        color: 'white',
-                        minWidth: '200px'
+                        color: 'white'
                     }}
                 />
 
@@ -100,14 +100,22 @@ export default function TeamList({ players }: { players: any[] }) {
                 <div>
                     {Object.entries(groupedTeams).map(([teamName, { players, logo_url }]) => (
                         <div key={teamName} style={{ marginBottom: '60px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px', borderBottom: '1px solid var(--primary-color)', paddingBottom: '15px' }}>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '15px',
+                                marginBottom: '25px',
+                                borderBottom: '1px solid var(--primary-color)',
+                                paddingBottom: '15px',
+                                flexWrap: 'wrap'
+                            }}>
                                 {logo_url && (
-                                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', background: '#222', border: '2px solid var(--primary-color)', flexShrink: 0 }}>
+                                    <div style={{ width: 'clamp(50px, 15vw, 80px)', height: 'clamp(50px, 15vw, 80px)', borderRadius: '50%', overflow: 'hidden', background: '#222', border: '2px solid var(--primary-color)', flexShrink: 0 }}>
                                         <img src={logo_url} alt={`${teamName} Logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     </div>
                                 )}
                                 <h3 style={{
-                                    fontSize: '2rem',
+                                    fontSize: 'clamp(1.5rem, 6vw, 2rem)',
                                     color: 'var(--text-main)',
                                     margin: 0
                                 }}>

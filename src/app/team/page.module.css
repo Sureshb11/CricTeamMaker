@@ -4,7 +4,7 @@
 }
 
 .title {
-    font-size: 3rem;
+    font-size: clamp(2rem, 8vw, 3rem);
     color: var(--primary-color);
     margin-bottom: 10px;
 }

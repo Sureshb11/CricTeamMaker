@@ -15,7 +15,17 @@ export default async function EditProfilePage() {
         sql: 'SELECT * FROM registrations WHERE id = ?',
         args: [session.userId]
     });
-    const user = result.rows[0] as any;
+    const userRow = result.rows[0];
+    const user = {
+        id: Number(userRow.id),
+        full_name: String(userRow.full_name),
+        email: String(userRow.email),
+        phone: String(userRow.phone),
+        team_name: String(userRow.team_name),
+        playing_role: String(userRow.playing_role),
+        experience_level: String(userRow.experience_level),
+        photo_url: userRow.photo_url ? String(userRow.photo_url) : null,
+    };
 
     if (!user) {
         redirect('/login');

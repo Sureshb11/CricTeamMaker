@@ -6,22 +6,43 @@ import RegisterForm from './register/register-form';
 
 async function getLatestRegistration() {
   const result = await db.execute('SELECT * FROM registrations ORDER BY created_at DESC LIMIT 1');
-  return result.rows[0] as any;
+  if (result.rows.length === 0) return null;
+  const row = result.rows[0];
+  return {
+    id: Number(row.id),
+    full_name: String(row.full_name),
+    email: String(row.email),
+    team_name: row.team_name ? String(row.team_name) : null,
+    playing_role: row.playing_role ? String(row.playing_role) : null,
+    photo_url: row.photo_url ? String(row.photo_url) : null,
+  };
 }
 
 async function getTeams() {
   const result = await db.execute('SELECT id, name FROM teams ORDER BY name ASC');
-  return result.rows.map(row => ({ id: row.id as number, name: row.name as string }));
+  return result.rows.map(row => ({ id: Number(row.id), name: String(row.name) }));
 }
 
 async function getTopScorers() {
   const result = await db.execute('SELECT * FROM registrations ORDER BY total_runs DESC LIMIT 3');
-  return result.rows as any[];
+  return result.rows.map(row => ({
+    id: Number(row.id),
+    full_name: String(row.full_name),
+    team_name: row.team_name ? String(row.team_name) : null,
+    photo_url: row.photo_url ? String(row.photo_url) : null,
+    total_runs: Number(row.total_runs)
+  }));
 }
 
 async function getTopWicketTakers() {
   const result = await db.execute('SELECT * FROM registrations ORDER BY total_wickets DESC LIMIT 3');
-  return result.rows as any[];
+  return result.rows.map(row => ({
+    id: Number(row.id),
+    full_name: String(row.full_name),
+    team_name: row.team_name ? String(row.team_name) : null,
+    photo_url: row.photo_url ? String(row.photo_url) : null,
+    total_wickets: Number(row.total_wickets)
+  }));
 }
 
 export default async function Home() {
@@ -45,9 +66,10 @@ export default async function Home() {
     return (
       <div className={styles.main} style={{ justifyContent: 'center', paddingTop: '40px' }}>
         <div style={{
+          width: '100%',
           maxWidth: '600px',
           margin: '0 auto',
-          padding: '40px',
+          padding: 'clamp(20px, 5vw, 40px)',
           background: 'rgba(255, 255, 255, 0.05)',
           borderRadius: '16px',
           border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -56,7 +78,7 @@ export default async function Home() {
           <h1 style={{
             textAlign: 'center',
             marginBottom: '30px',
-            fontSize: '2.5rem',
+            fontSize: 'clamp(1.75rem, 8vw, 2.5rem)',
             color: 'var(--primary-color)'
           }}>
             Join Our Team
@@ -97,7 +119,7 @@ export default async function Home() {
         <div className={styles.card} style={{ gridColumn: '1 / -1' }}>
           <h2 className={styles.sectionTitle} style={{ textAlign: 'center', marginBottom: '30px' }}>🏆 Season Leaders</h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '20px' }}>
             {/* Orange Cap - Batting */}
             <div style={{ background: 'rgba(255, 165, 0, 0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255, 165, 0, 0.3)' }}>
               <h3 style={{ color: 'orange', textAlign: 'center', marginBottom: '15px' }}>Orange Cap (Runs) 🏏</h3>

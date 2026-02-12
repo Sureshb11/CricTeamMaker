@@ -8,7 +8,7 @@
 
 .card {
     background: #1e1e1e;
-    padding: 40px;
+    padding: clamp(25px, 6vw, 40px);
     border-radius: 12px;
     width: 100%;
     max-width: 400px;

@@ -4,7 +4,10 @@ import db from '@/lib/db';
 
 async function getTeams() {
     const result = await db.execute('SELECT id, name FROM teams ORDER BY name ASC');
-    return result.rows as unknown as { id: number; name: string }[];
+    return result.rows.map(row => ({
+        id: Number(row.id),
+        name: String(row.name)
+    }));
 }
 
 export default async function RegisterPage(props: { searchParams: Promise<{ success?: string }> }) {
