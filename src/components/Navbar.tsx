@@ -9,7 +9,7 @@ export default async function Navbar() {
     let user = null;
     if (session) {
         const result = await db.execute({
-            sql: 'SELECT full_name FROM registrations WHERE id = ?',
+            sql: 'SELECT full_name, role FROM registrations WHERE id = ?',
             args: [session.userId]
         });
         user = result.rows[0] as any;
@@ -21,7 +21,7 @@ export default async function Navbar() {
             </Link>
             <NavLinks
                 session={session ? { ...session, expiresAt: new Date(session.expiresAt).toISOString() } : null}
-                user={user ? { full_name: user.full_name } : null}
+                user={user ? { full_name: user.full_name, role: user.role } : null}
             />
         </nav>
     );

@@ -10,7 +10,8 @@ import {
     Image as ImageIcon,
     LogIn,
     UserPlus,
-    ArrowRightLeft
+    ArrowRightLeft,
+    Settings
 } from 'lucide-react';
 
 interface NavLinksProps {
@@ -34,9 +35,19 @@ export default function NavLinks({ session, user }: NavLinksProps) {
             <ul className={`${styles.navLinks} ${isOpen ? styles.navLinksActive : ''}`}>
                 <li><Link href="/" className={styles.navLink} onClick={closeMenu} style={linkStyle}><Home size={18} /> Home</Link></li>
                 <li><Link href="/team" className={styles.navLink} onClick={closeMenu} style={linkStyle}><Users size={18} /> Our Teams</Link></li>
-                <li><Link href="/compare" className={styles.navLink} onClick={closeMenu} style={linkStyle}><ArrowRightLeft size={18} /> Compare</Link></li> {/* Added Compare link */}
+                <li><Link href="/compare" className={styles.navLink} onClick={closeMenu} style={linkStyle}><ArrowRightLeft size={18} /> Compare</Link></li>
                 <li><Link href="/matches" className={styles.navLink} onClick={closeMenu} style={linkStyle}><Trophy size={18} /> Matches</Link></li>
                 <li><Link href="/gallery" className={styles.navLink} onClick={closeMenu} style={linkStyle}><ImageIcon size={18} /> Gallery</Link></li>
+
+                {/* Admin Link */}
+                {(user?.role === 'admin' || user?.role === 'super_admin') && (
+                    <li>
+                        <Link href="/admin" className={styles.navLink} onClick={closeMenu} style={{ ...linkStyle, color: '#FFD700' }}>
+                            <Settings size={18} /> Admin Panel
+                        </Link>
+                    </li>
+                )}
+
                 {session ? (
                     <li><Link href="/dashboard" className={styles.navLink} style={{ ...linkStyle, color: 'var(--primary-color)' }} onClick={closeMenu}>Hi, {user?.full_name?.split(' ')[0]}</Link></li>
                 ) : (
