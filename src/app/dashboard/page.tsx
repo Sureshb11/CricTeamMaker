@@ -2,6 +2,23 @@ import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import db from '@/lib/db';
 import styles from './page.module.css';
+import {
+    Edit2,
+    Settings,
+    Megaphone,
+    User,
+    Shield,
+    UserCircle,
+    Star,
+    Mail,
+    Phone,
+    PlayCircle,
+    TrendingUp,
+    Target,
+    Award,
+    LogOut,
+    BarChart2
+} from 'lucide-react';
 
 export default async function DashboardPage() {
     const session = await getSession();
@@ -47,7 +64,9 @@ export default async function DashboardPage() {
 
                 <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
                     <a href="/dashboard/edit" style={{
-                        display: 'inline-block',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
                         padding: '10px 20px',
                         background: 'rgba(255, 255, 255, 0.1)',
                         border: '1px solid var(--primary-color)',
@@ -57,12 +76,14 @@ export default async function DashboardPage() {
                         fontSize: '0.9rem',
                         transition: 'all 0.3s ease'
                     }}>
-                        ✏️ Edit Profile
+                        <Edit2 size={16} /> Edit Profile
                     </a>
 
                     {user.role === 'admin' && (
                         <a href="/admin" style={{
-                            display: 'inline-block',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
                             padding: '10px 20px',
                             background: 'var(--primary-color)',
                             border: '1px solid var(--primary-color)',
@@ -73,7 +94,7 @@ export default async function DashboardPage() {
                             fontSize: '0.9rem',
                             transition: 'all 0.3s ease'
                         }}>
-                            🛠️ Admin Panel
+                            <Settings size={16} /> Admin Panel
                         </a>
                     )}
                 </div>
@@ -82,7 +103,7 @@ export default async function DashboardPage() {
             {announcements.length > 0 && (
                 <div style={{ marginBottom: '30px', background: 'rgba(0, 255, 136, 0.05)', border: '1px solid rgba(0, 255, 136, 0.2)', borderRadius: '12px', padding: '20px' }}>
                     <h2 style={{ color: 'var(--primary-color)', marginTop: 0, marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        📢 Team Announcements
+                        <Megaphone size={24} /> Team Announcements
                     </h2>
                     <div style={{ display: 'grid', gap: '15px' }}>
                         {announcements.map((item: any) => (
@@ -98,47 +119,73 @@ export default async function DashboardPage() {
 
             <div className={styles.grid}>
                 <div className={styles.card}>
-                    <h2>Player Profile</h2>
+                    <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <User size={20} /> Player Profile
+                    </h2>
                     <div className={styles.profileInfo}>
                         <div className={styles.row}>
-                            <span className={styles.label}>Team:</span>
+                            <span className={styles.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Shield size={14} /> Team:
+                            </span>
                             <span className={styles.value}>{user.team_name}</span>
                         </div>
                         <div className={styles.row}>
-                            <span className={styles.label}>Role:</span>
+                            <span className={styles.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <UserCircle size={14} /> Role:
+                            </span>
                             <span className={styles.value}>{user.playing_role}</span>
                         </div>
                         <div className={styles.row}>
-                            <span className={styles.label}>Experience:</span>
+                            <span className={styles.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Star size={14} /> Experience:
+                            </span>
                             <span className={styles.value}>{user.experience_level}</span>
                         </div>
                         <div className={styles.row}>
-                            <span className={styles.label}>Email:</span>
+                            <span className={styles.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Mail size={14} /> Email:
+                            </span>
                             <span className={styles.value}>{user.email}</span>
                         </div>
                         <div className={styles.row}>
-                            <span className={styles.label}>Phone:</span>
+                            <span className={styles.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Phone size={14} /> Phone:
+                            </span>
                             <span className={styles.value}>{user.phone}</span>
                         </div>
                     </div>
                 </div>
 
                 <div className={styles.card}>
-                    <h2>My Stats</h2>
+                    <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <BarChart2 size={20} /> My Stats
+                    </h2>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' }}>
                         <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                                <PlayCircle size={24} color="var(--primary-color)" />
+                            </div>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>{user.matches_played || 0}</div>
                             <div style={{ fontSize: '0.8rem', color: '#888' }}>Matches</div>
                         </div>
                         <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                                <TrendingUp size={24} color="var(--primary-color)" />
+                            </div>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>{user.total_runs || 0}</div>
                             <div style={{ fontSize: '0.8rem', color: '#888' }}>Runs</div>
                         </div>
                         <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                                <Target size={24} color="var(--primary-color)" />
+                            </div>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>{user.total_wickets || 0}</div>
                             <div style={{ fontSize: '0.8rem', color: '#888' }}>Wickets</div>
                         </div>
                         <div style={{ textAlign: 'center', background: 'rgba(255,255,255,0.05)', padding: '15px', borderRadius: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                                <Award size={24} color="var(--primary-color)" />
+                            </div>
                             <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary-color)' }}>{user.highest_score || 0}</div>
                             <div style={{ fontSize: '0.8rem', color: '#888' }}>High Score</div>
                         </div>
@@ -153,7 +200,9 @@ export default async function DashboardPage() {
                     await deleteSession();
                     redirect('/login');
                 }}>
-                    <button className={styles.logoutBtn}>Logout</button>
+                    <button className={styles.logoutBtn} style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}>
+                        <LogOut size={18} /> Logout
+                    </button>
                 </form>
             </div>
         </div>

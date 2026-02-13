@@ -19,7 +19,16 @@ export async function updateProfile(prevState: any, formData: FormData) {
     const phone = formData.get('phone') as string;
     const playing_role = formData.get('playing_role') as string;
     const experience_level = formData.get('experience_level') as string;
+    const team_name = formData.get('team_name') as string;
     const profile_photo_file = formData.get('profile_photo') as File;
+
+    // Fetch user role to verify admin status
+    const userResult = await db.execute({
+        sql: 'SELECT role FROM registrations WHERE id = ?',
+        args: [session.userId]
+    });
+    const userRole = userResult.rows[0]?.role;
+    const isAdmin = userRole === 'admin';
 
     // Validate Phone
     const phoneRegex = /^[6-9]\d{9}$/;
@@ -38,25 +47,23 @@ export async function updateProfile(prevState: any, formData: FormData) {
     }
 
     try {
+        let sql = 'UPDATE registrations SET phone = ?, playing_role = ?, experience_level = ?';
+        const args: any[] = [phone, playing_role, experience_level];
+
         if (photo_url) {
-            await db.execute({
-                sql: `
-                UPDATE registrations 
-                SET phone = ?, playing_role = ?, experience_level = ?, photo_url = ?
-                WHERE id = ?
-                `,
-                args: [phone, playing_role, experience_level, photo_url, session.userId]
-            });
-        } else {
-            await db.execute({
-                sql: `
-                UPDATE registrations 
-                SET phone = ?, playing_role = ?, experience_level = ?
-                WHERE id = ?
-                `,
-                args: [phone, playing_role, experience_level, session.userId]
-            });
+            sql += ', photo_url = ?';
+            args.push(photo_url);
         }
+
+        if (isAdmin && team_name) {
+            sql += ', team_name = ?';
+            args.push(team_name);
+        }
+
+        sql += ' WHERE id = ?';
+        args.push(session.userId);
+
+        await db.execute({ sql, args });
 
         revalidatePath('/dashboard');
         revalidatePath('/team');

@@ -1,5 +1,6 @@
 import styles from './page.module.css';
 import db from '@/lib/db';
+import { PlayCircle, MapPin } from 'lucide-react';
 
 async function getMatches() {
     const result = await db.execute('SELECT * FROM matches ORDER BY date DESC');
@@ -27,7 +28,9 @@ export default async function MatchesPage() {
                     </span>
                 </div>
                 <div className={styles.venue}>
-                    <span className={styles.icon}>📍</span>
+                    <span className={styles.icon} style={{ display: 'flex', alignItems: 'center' }}>
+                        <MapPin size={16} color="var(--primary-color)" />
+                    </span>
                     <div className={styles.venueText}>
                         <span className={styles.groundName}>
                             {match.venue.split(',')[0]}
@@ -62,7 +65,9 @@ export default async function MatchesPage() {
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1 className={styles.title}>Match Schedule</h1>
+                <h1 className={styles.title} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                    <PlayCircle size={32} /> Match Schedule
+                </h1>
                 <p style={{ color: 'var(--text-muted)' }}>Follow DVS TEAM journey, match by match.</p>
             </div>
 

@@ -1,5 +1,6 @@
 import styles from './page.module.css';
 import db from '@/lib/db';
+import { Image as ImageIcon } from 'lucide-react';
 
 async function getImages() {
     const result = await db.execute('SELECT * FROM gallery_images ORDER BY created_at DESC');
@@ -11,7 +12,9 @@ export default async function GalleryPage() {
 
     return (
         <div>
-            <h1 className="text-center" style={{ fontSize: '3rem', marginBottom: '10px', color: 'var(--primary-color)' }}>Gallery</h1>
+            <h1 className="text-center" style={{ fontSize: '3rem', marginBottom: '10px', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                <ImageIcon size={40} /> Gallery
+            </h1>
             <p className="text-center" style={{ color: 'var(--text-muted)' }}>Relive the best moments.</p>
 
             {images.length === 0 ? (

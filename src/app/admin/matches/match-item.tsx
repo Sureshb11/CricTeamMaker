@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { updateMatchResult, deleteMatch } from './actions';
+import { Save, Edit2, Trash2, Calendar, MapPin } from 'lucide-react';
 
 export default function MatchItem({ match }: { match: any }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -9,7 +10,7 @@ export default function MatchItem({ match }: { match: any }) {
 
     if (isEditing) {
         return (
-            <div style={{ background: '#2a2a2a', padding: '15px', borderRadius: '8px', marginBottom: '10px', border: '1px solid var(--primary-color)' }}>
+            <div className="card" style={{ border: '1px solid var(--primary-color)' }}>
                 <form action={async (formData) => {
                     setIsLoading(true);
                     await updateMatchResult(formData);
@@ -18,31 +19,31 @@ export default function MatchItem({ match }: { match: any }) {
                 }}>
                     <input type="hidden" name="id" value={match.id} />
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>Home Team</label>
+                            <label style={labelStyle}>Home Team</label>
                             <input name="home_team" defaultValue={match.home_team || 'DVS TEAM'} style={inputStyle} />
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>Away Team</label>
+                            <label style={labelStyle}>Away Team</label>
                             <input name="away_team" defaultValue={match.away_team || match.opponent} style={inputStyle} />
                         </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>Date</label>
+                            <label style={labelStyle}>Date</label>
                             <input name="date" defaultValue={match.date} style={inputStyle} />
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>Venue</label>
+                            <label style={labelStyle}>Venue</label>
                             <input name="venue" defaultValue={match.venue} style={inputStyle} />
                         </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '15px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '20px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>Result</label>
+                            <label style={labelStyle}>Result</label>
                             <select name="result" defaultValue={match.result || ''} style={inputStyle}>
                                 <option value="">Pending</option>
                                 <option value="Won">Won</option>
@@ -51,14 +52,14 @@ export default function MatchItem({ match }: { match: any }) {
                             </select>
                         </div>
                         <div>
-                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>Score/Summary</label>
+                            <label style={labelStyle}>Score Summary</label>
                             <input name="score" defaultValue={match.score} placeholder="e.g. Won by 20 runs" style={inputStyle} />
                         </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '10px' }}>
-                        <button type="submit" disabled={isLoading} style={saveBtnStyle}>
-                            {isLoading ? 'Saving...' : '💾 Save Changes'}
+                        <button type="submit" disabled={isLoading} style={{ ...saveBtnStyle, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {isLoading ? 'Saving...' : <><Save size={16} /> Save Changes</>}
                         </button>
                         <button type="button" onClick={() => setIsEditing(false)} style={cancelBtnStyle}>
                             Cancel
@@ -69,37 +70,48 @@ export default function MatchItem({ match }: { match: any }) {
         );
     }
 
+    const resultColor = match.result === 'Won' ? 'var(--primary-color)' : match.result === 'Lost' ? '#ff5252' : '#888';
+
     return (
-        <div style={{
+        <div className="card" style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: '#1a1a1a',
-            padding: '15px',
-            marginBottom: '10px',
-            borderRadius: '8px',
-            borderLeft: match.result === 'Won' ? '4px solid #00ff88' : match.result === 'Lost' ? '4px solid #ff5252' : '4px solid #888'
+            borderLeft: `4px solid ${resultColor}`
         }}>
             <div>
-                <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
-                    {match.home_team || 'DVS'} vs {match.away_team || match.opponent}
+                <div style={{ fontWeight: '800', fontSize: '1.2rem', color: 'white' }}>
+                    {match.home_team || 'DVS'} <span style={{ color: '#444', fontSize: '1rem', fontStyle: 'italic' }}>vs</span> {match.away_team || match.opponent}
                 </div>
-                <div style={{ color: '#888', fontSize: '0.9rem' }}>
-                    {match.date} • {match.venue}
+                <div style={{ color: '#666', fontSize: '0.9rem', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {match.date}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {match.venue}</span>
                 </div>
-                {match.score && <div style={{ marginTop: '5px', color: '#ccc' }}>{match.score} ({match.result})</div>}
+                {match.score && (
+                    <div style={{
+                        marginTop: '10px',
+                        fontSize: '0.9rem',
+                        background: 'rgba(255,255,255,0.03)',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        display: 'inline-block',
+                        border: '1px solid rgba(255,255,255,0.05)'
+                    }}>
+                        <span style={{ color: resultColor, fontWeight: 'bold' }}>{match.result}</span>: {match.score}
+                    </div>
+                )}
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
                 <button onClick={() => setIsEditing(true)} style={editBtnStyle}>
-                    ✏️ Edit
+                    <Edit2 size={16} />
                 </button>
 
                 <form action={async () => {
                     if (confirm('Delete this match?')) await deleteMatch(match.id);
                 }}>
                     <button style={deleteBtnStyle}>
-                        ❌
+                        <Trash2 size={16} />
                     </button>
                 </form>
             </div>
@@ -107,49 +119,59 @@ export default function MatchItem({ match }: { match: any }) {
     );
 }
 
+const labelStyle = {
+    display: 'block',
+    fontSize: '0.75rem',
+    color: '#888',
+    marginBottom: '5px',
+    textTransform: 'uppercase' as const,
+    fontWeight: 'bold',
+};
+
 const inputStyle = {
     width: '100%',
-    padding: '8px',
-    background: '#333',
-    border: '1px solid #444',
-    borderRadius: '4px',
+    padding: '10px',
+    background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '8px',
     color: 'white',
-    marginTop: '2px'
 };
 
 const saveBtnStyle = {
     background: 'var(--primary-color)',
     color: 'black',
     border: 'none',
-    padding: '8px 15px',
-    borderRadius: '4px',
+    padding: '10px 20px',
+    borderRadius: '8px',
     cursor: 'pointer',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize: '0.9rem',
 };
 
 const cancelBtnStyle = {
     background: 'transparent',
-    color: '#ccc',
-    border: '1px solid #444',
-    padding: '8px 15px',
-    borderRadius: '4px',
-    cursor: 'pointer'
+    color: '#888',
+    border: '1px solid rgba(255,255,255,0.1)',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '0.9rem',
 };
 
 const editBtnStyle = {
-    background: 'transparent',
-    border: '1px solid #444',
+    background: 'rgba(0, 255, 136, 0.05)',
+    border: '1px solid rgba(0, 255, 136, 0.1)',
     color: 'var(--primary-color)',
-    padding: '5px 10px',
-    borderRadius: '4px',
-    cursor: 'pointer'
+    padding: '8px 12px',
+    borderRadius: '8px',
+    cursor: 'pointer',
 };
 
 const deleteBtnStyle = {
-    background: 'transparent',
-    border: '1px solid #444',
+    background: 'rgba(255, 82, 82, 0.05)',
+    border: '1px solid rgba(255, 82, 82, 0.1)',
     color: '#ff5252',
-    padding: '5px 10px',
-    borderRadius: '4px',
-    cursor: 'pointer'
+    padding: '8px 12px',
+    borderRadius: '8px',
+    cursor: 'pointer',
 };

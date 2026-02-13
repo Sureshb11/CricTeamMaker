@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import Link from 'next/link';
 import { getSession } from '@/lib/session';
 import RegisterForm from './register/register-form';
+import { Rocket, Trophy, PlayCircle, Target, User, Users, ArrowRight, Calendar } from 'lucide-react';
 
 async function getLatestRegistration() {
   const result = await db.execute('SELECT * FROM registrations ORDER BY created_at DESC LIMIT 1');
@@ -79,9 +80,13 @@ export default async function Home() {
             textAlign: 'center',
             marginBottom: '30px',
             fontSize: 'clamp(1.75rem, 8vw, 2.5rem)',
-            color: 'var(--primary-color)'
+            color: 'var(--primary-color)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '15px'
           }}>
-            Join Our Team
+            <Rocket size={32} /> Join Our Team
           </h1>
           <RegisterForm teams={teams} />
 
@@ -117,19 +122,25 @@ export default async function Home() {
 
         {/* Season Leaders Section */}
         <div className={styles.card} style={{ gridColumn: '1 / -1' }}>
-          <h2 className={styles.sectionTitle} style={{ textAlign: 'center', marginBottom: '30px' }}>🏆 Season Leaders</h2>
+          <h2 className={styles.sectionTitle} style={{ textAlign: 'center', marginBottom: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+            <Trophy size={28} /> Season Leaders
+          </h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '20px' }}>
             {/* Orange Cap - Batting */}
             <div style={{ background: 'rgba(255, 165, 0, 0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(255, 165, 0, 0.3)' }}>
-              <h3 style={{ color: 'orange', textAlign: 'center', marginBottom: '15px' }}>Orange Cap (Runs) 🏏</h3>
+              <h3 style={{ color: 'orange', textAlign: 'center', marginBottom: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                Orange Cap (Runs) <PlayCircle size={20} />
+              </h3>
               {topScorers.map((player, index) => (
                 <div key={player.id} style={{ display: 'flex', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                   <span style={{ fontSize: '1.2rem', fontWeight: 'bold', width: '30px', color: '#888' }}>#{index + 1}</span>
                   {player.photo_url ? (
                     <img src={player.photo_url} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', marginRight: '15px' }} />
                   ) : (
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#333', marginRight: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👤</div>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#333', marginRight: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <User size={20} color="#888" />
+                    </div>
                   )}
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600 }}>{player.full_name}</div>
@@ -142,14 +153,18 @@ export default async function Home() {
 
             {/* Purple Cap - Bowling */}
             <div style={{ background: 'rgba(138, 43, 226, 0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(138, 43, 226, 0.3)' }}>
-              <h3 style={{ color: 'blueviolet', textAlign: 'center', marginBottom: '15px' }}>Purple Cap (Wickets) 🥎</h3>
+              <h3 style={{ color: 'blueviolet', textAlign: 'center', marginBottom: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                Purple Cap (Wickets) <Target size={20} />
+              </h3>
               {topWicketTakers.map((player, index) => (
                 <div key={player.id} style={{ display: 'flex', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                   <span style={{ fontSize: '1.2rem', fontWeight: 'bold', width: '30px', color: '#888' }}>#{index + 1}</span>
                   {player.photo_url ? (
                     <img src={player.photo_url} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', marginRight: '15px' }} />
                   ) : (
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#333', marginRight: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👤</div>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#333', marginRight: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <User size={20} color="#888" />
+                    </div>
                   )}
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600 }}>{player.full_name}</div>
@@ -163,7 +178,9 @@ export default async function Home() {
         </div>
 
         <div className={styles.card}>
-          <h2 className={styles.sectionTitle}>Newest Member</h2>
+          <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Users size={20} /> Newest Member
+          </h2>
           {latestPlayer ? (
             <div>
               <h3>{latestPlayer.full_name}</h3>
@@ -174,17 +191,23 @@ export default async function Home() {
             <p>No players registered yet.</p>
           )}
           <div style={{ marginTop: '20px' }}>
-            <Link href="/team" style={{ color: 'var(--primary-color)' }}>View All Players →</Link>
+            <Link href="/team" style={{ color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              View All Players <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
 
         <div className={styles.card}>
-          <h2 className={styles.sectionTitle}>Season Details</h2>
+          <h2 className={styles.sectionTitle} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Calendar size={20} /> Season Details
+          </h2>
           <p className={styles.description}>
             Registrations are open for the upcoming season.
           </p>
           <div style={{ marginTop: '20px' }}>
-            <Link href="/matches" style={{ color: 'var(--primary-color)' }}>Check Schedule →</Link>
+            <Link href="/matches" style={{ color: 'var(--primary-color)', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              Check Schedule <ArrowRight size={16} />
+            </Link>
           </div>
         </div>
       </div>

@@ -3,15 +3,13 @@
 import { useActionState } from 'react';
 import { updateProfile } from '../actions';
 import styles from '../../register/page.module.css'; // Reuse register form styles
+import { User, Shield, Phone, UserCircle, Star, Image as ImageIcon, Save } from 'lucide-react';
 
-// We can reuse the register styles since they are generic form styles.
-
-const initialState = {
-    error: '',
-};
-
-export default function EditProfileForm({ user }: { user: any }) {
+export default function EditProfileForm({ user, teams }: { user: any, teams: string[] }) {
     const [state, formAction, isPending] = useActionState(updateProfile as any, initialState);
+
+    const labelStyle = { display: 'flex', alignItems: 'center', gap: '8px' };
+    const isAdmin = user.role === 'admin';
 
     return (
         <form action={formAction}>
@@ -22,7 +20,9 @@ export default function EditProfileForm({ user }: { user: any }) {
             )}
 
             <div className={styles.formGroup}>
-                <label className={styles.label}>Full Name</label>
+                <label className={styles.label} style={labelStyle}>
+                    <User size={16} /> Full Name
+                </label>
                 <input
                     type="text"
                     className={styles.input}
@@ -34,19 +34,39 @@ export default function EditProfileForm({ user }: { user: any }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label className={styles.label}>Team</label>
-                <input
-                    type="text"
-                    className={styles.input}
-                    value={user.team_name}
-                    disabled
-                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
-                />
-                <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>Team is fixed. Contact admin to change.</small>
+                <label htmlFor="team_name" className={styles.label} style={labelStyle}>
+                    <Shield size={16} /> Team
+                </label>
+                {isAdmin ? (
+                    <select
+                        id="team_name"
+                        name="team_name"
+                        className={styles.select}
+                        defaultValue={user.team_name}
+                        required
+                    >
+                        {teams.map(team => (
+                            <option key={team} value={team}>{team}</option>
+                        ))}
+                    </select>
+                ) : (
+                    <>
+                        <input
+                            type="text"
+                            className={styles.input}
+                            value={user.team_name}
+                            disabled
+                            style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                        />
+                        <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>Team is fixed. Contact admin to change.</small>
+                    </>
+                )}
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="phone" className={styles.label}>Phone Number</label>
+                <label htmlFor="phone" className={styles.label} style={labelStyle}>
+                    <Phone size={16} /> Phone Number
+                </label>
                 <input
                     type="tel"
                     id="phone"
@@ -60,7 +80,9 @@ export default function EditProfileForm({ user }: { user: any }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="playing_role" className={styles.label}>Playing Role</label>
+                <label htmlFor="playing_role" className={styles.label} style={labelStyle}>
+                    <UserCircle size={16} /> Playing Role
+                </label>
                 <select
                     id="playing_role"
                     name="playing_role"
@@ -100,7 +122,9 @@ export default function EditProfileForm({ user }: { user: any }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="experience_level" className={styles.label}>Experience Level</label>
+                <label htmlFor="experience_level" className={styles.label} style={labelStyle}>
+                    <Star size={16} /> Experience Level
+                </label>
                 <select
                     id="experience_level"
                     name="experience_level"
@@ -114,7 +138,9 @@ export default function EditProfileForm({ user }: { user: any }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="profile_photo" className={styles.label}>Update Profile Photo</label>
+                <label htmlFor="profile_photo" className={styles.label} style={labelStyle}>
+                    <ImageIcon size={16} /> Update Profile Photo
+                </label>
                 {user.photo_url && (
                     <div style={{ marginBottom: '10px' }}>
                         <img src={user.photo_url} alt="Current" style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', verticalAlign: 'middle', marginRight: '10px' }} />
@@ -132,8 +158,8 @@ export default function EditProfileForm({ user }: { user: any }) {
             </div>
 
             <div style={{ display: 'flex', gap: '10px', marginTop: '30px' }}>
-                <button type="submit" className={styles.button} disabled={isPending}>
-                    {isPending ? 'Saving...' : 'Save Changes'}
+                <button type="submit" className={styles.button} disabled={isPending} style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                    {isPending ? 'Saving...' : <><Save size={18} /> Save Changes</>}
                 </button>
                 <a href="/dashboard" className={styles.button} style={{ background: 'transparent', border: '1px solid #444', color: '#fff', textAlign: 'center', textDecoration: 'none' }}>
                     Cancel
@@ -142,3 +168,7 @@ export default function EditProfileForm({ user }: { user: any }) {
         </form>
     );
 }
+
+const initialState = {
+    error: '',
+};

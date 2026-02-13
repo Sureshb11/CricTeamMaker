@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from 'react';
 import { registerPlayer } from './actions';
 import styles from './page.module.css';
+import { User, Mail, Phone, Shield, Image as ImageIcon, UserCircle, Star, Send } from 'lucide-react';
 
 type FormInputs = {
     full_name?: string;
@@ -41,6 +42,8 @@ type Team = {
 export default function RegisterForm({ teams }: { teams: Team[] }) {
     const [state, formAction, isPending] = useActionState(registerPlayer as any, initialState);
     const [teamSelection, setTeamSelection] = useState<string>(state.inputs?.team_name || '');
+
+    const labelStyle = { display: 'flex', alignItems: 'center', gap: '8px' };
 
     // Sync state update if server returns a different team name (e.g. from persisted input)
     useEffect(() => {
@@ -123,7 +126,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             )}
 
             <div className={styles.formGroup}>
-                <label htmlFor="full_name" className={styles.label}>Full Name</label>
+                <label htmlFor="full_name" className={styles.label} style={labelStyle}>
+                    <User size={16} /> Full Name
+                </label>
                 <input
                     type="text"
                     id="full_name"
@@ -136,7 +141,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="email" className={styles.label}>Email Address</label>
+                <label htmlFor="email" className={styles.label} style={labelStyle}>
+                    <Mail size={16} /> Email Address
+                </label>
                 <input
                     type="email"
                     id="email"
@@ -149,7 +156,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="phone" className={styles.label}>Phone Number (+91)</label>
+                <label htmlFor="phone" className={styles.label} style={labelStyle}>
+                    <Phone size={16} /> Phone Number (+91)
+                </label>
                 <input
                     type="tel"
                     id="phone"
@@ -165,7 +174,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="team_name" className={styles.label}>Team Name</label>
+                <label htmlFor="team_name" className={styles.label} style={labelStyle}>
+                    <Shield size={16} /> Team Name
+                </label>
                 <select
                     id="team_name"
                     name="team_name"
@@ -185,7 +196,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             {teamSelection === 'New Team' && (
                 <div style={{ marginTop: '-10px', marginBottom: '20px', padding: '15px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', border: '1px dashed var(--primary-color)' }}>
                     <div className={styles.formGroup}>
-                        <label htmlFor="new_team_name" className={styles.label} style={{ color: 'var(--primary-color)' }}>New Team Name</label>
+                        <label htmlFor="new_team_name" className={styles.label} style={{ ...labelStyle, color: 'var(--primary-color)' }}>
+                            <Shield size={16} /> New Team Name
+                        </label>
                         <input
                             type="text"
                             id="new_team_name"
@@ -198,7 +211,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
                     </div>
 
                     <div className={styles.formGroup} style={{ marginBottom: 0 }}>
-                        <label htmlFor="team_logo" className={styles.label} style={{ color: '#aaa', fontSize: '0.9rem' }}>Team Logo (Optional)</label>
+                        <label htmlFor="team_logo" className={styles.label} style={{ ...labelStyle, color: '#aaa', fontSize: '0.9rem' }}>
+                            <ImageIcon size={14} /> Team Logo (Optional)
+                        </label>
                         <input
                             type="file"
                             id="team_logo"
@@ -212,7 +227,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             )}
 
             <div className={styles.formGroup}>
-                <label htmlFor="profile_photo" className={styles.label}>Profile Photo (Optional)</label>
+                <label htmlFor="profile_photo" className={styles.label} style={labelStyle}>
+                    <ImageIcon size={16} /> Profile Photo (Optional)
+                </label>
                 <input
                     type="file"
                     id="profile_photo"
@@ -224,7 +241,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="playing_role" className={styles.label}>Playing Role</label>
+                <label htmlFor="playing_role" className={styles.label} style={labelStyle}>
+                    <UserCircle size={16} /> Playing Role
+                </label>
                 <select
                     id="playing_role"
                     name="playing_role"
@@ -264,7 +283,9 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
             </div>
 
             <div className={styles.formGroup}>
-                <label htmlFor="experience_level" className={styles.label}>Experience Level</label>
+                <label htmlFor="experience_level" className={styles.label} style={labelStyle}>
+                    <Star size={16} /> Experience Level
+                </label>
                 <select
                     id="experience_level"
                     name="experience_level"
@@ -277,8 +298,8 @@ export default function RegisterForm({ teams }: { teams: Team[] }) {
                 </select>
             </div>
 
-            <button type="submit" className={styles.button} disabled={isPending}>
-                {isPending ? 'Sending OTP...' : 'Continue to Verification'}
+            <button type="submit" className={styles.button} disabled={isPending} style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                {isPending ? 'Sending OTP...' : <><Send size={18} /> Continue to Verification</>}
             </button>
         </form>
     );

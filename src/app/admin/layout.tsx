@@ -1,6 +1,7 @@
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import db from '@/lib/db';
+import AdminSidebar from '@/components/admin/Sidebar';
 
 export default async function AdminLayout({
     children,
@@ -24,8 +25,19 @@ export default async function AdminLayout({
     }
 
     return (
-        <div style={{ padding: '20px' }}>
-            {children}
+        <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background-start)' }}>
+            <AdminSidebar />
+            <main style={{
+                flex: 1,
+                padding: '40px',
+                maxHeight: '100vh',
+                overflowY: 'auto',
+                position: 'relative'
+            }}>
+                <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+                    {children}
+                </div>
+            </main>
         </div>
     );
 }

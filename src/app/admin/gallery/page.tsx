@@ -1,6 +1,7 @@
 import db from '@/lib/db';
 import { uploadGalleryImage, deleteGalleryImage } from './actions';
 import styles from '@/app/register/page.module.css';
+import { Image as ImageIcon, Upload, Trash2 } from 'lucide-react';
 
 async function getImages() {
     const result = await db.execute('SELECT * FROM gallery_images ORDER BY created_at DESC');
@@ -11,12 +12,19 @@ export default async function ManageGallery() {
     const images = await getImages();
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <h1 className={styles.sectionTitle} style={{ textAlign: 'center', marginBottom: '30px' }}>Manage Gallery</h1>
+        <div>
+            <div style={{ marginBottom: '30px' }}>
+                <h1 style={{ margin: 0, fontSize: '1.75rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <ImageIcon size={28} /> Manage Gallery
+                </h1>
+                <p style={{ color: '#888', marginTop: '5px' }}>Upload photos from recent matches and events</p>
+            </div>
 
             {/* Upload Form */}
-            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '20px', borderRadius: '12px', marginBottom: '40px' }}>
-                <h2 style={{ marginBottom: '20px', color: 'var(--primary-color)' }}>Upload New Photo</h2>
+            <div className="card" style={{ marginBottom: '40px' }}>
+                <h2 style={{ marginBottom: '25px', color: 'var(--primary-color)', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Upload size={20} /> Upload New Photo
+                </h2>
                 <form action={async (formData) => {
                     'use server';
                     await uploadGalleryImage(formData);
@@ -27,44 +35,59 @@ export default async function ManageGallery() {
                     </div>
 
                     <div className={styles.formGroup}>
-                        <label className={styles.label}>Photo</label>
-                        <input type="file" name="image" className={styles.input} accept="image/*" required style={{ padding: '10px' }} />
+                        <label className={styles.label}>Photo File</label>
+                        <input type="file" name="image" className={styles.input} accept="image/*" required style={{ padding: '12px' }} />
                     </div>
 
-                    <button type="submit" className={styles.button}>Upload Photo</button>
+                    <button type="submit" className={styles.button} style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                        <ImageIcon size={18} /> Upload to Gallery
+                    </button>
                 </form>
             </div>
 
             {/* Gallery Grid */}
-            <h2 style={{ marginBottom: '20px' }}>Uploaded Photos ({images.length})</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
-                {images.map(img => (
-                    <div key={img.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '1px solid #333' }}>
-                        <img src={img.image_url} alt={img.caption} style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
-                        <div style={{ padding: '10px', background: '#1a1a1a' }}>
-                            <p style={{ fontSize: '0.8rem', color: '#ccc', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {img.caption || 'No Caption'}
-                            </p>
-                            <form action={async () => {
-                                'use server';
-                                await deleteGalleryImage(img.id);
-                            }}>
-                                <button style={{
-                                    width: '100%',
-                                    marginTop: '10px',
-                                    background: '#ff5252',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '5px',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer'
+            <h2 style={{ marginBottom: '25px', fontSize: '1.25rem' }}>Photo Gallery ({images.length})</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+                {images.length > 0 ? (
+                    images.map(img => (
+                        <div key={img.id} className="card" style={{ padding: 0, overflow: 'hidden', position: 'relative' }}>
+                            <div style={{ height: '200px', overflow: 'hidden' }}>
+                                <img src={img.image_url} alt={img.caption || 'Gallery Image'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            </div>
+                            <div style={{ padding: '15px', background: 'rgba(255,255,255,0.02)' }}>
+                                <p style={{ fontSize: '0.9rem', color: '#ccc', margin: '0 0 15px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {img.caption || 'No Caption'}
+                                </p>
+                                <form action={async () => {
+                                    'use server';
+                                    await deleteGalleryImage(img.id);
                                 }}>
-                                    Delete
-                                </button>
-                            </form>
+                                    <button style={{
+                                        width: '100%',
+                                        background: 'rgba(255, 82, 82, 0.05)',
+                                        border: '1px solid rgba(255, 82, 82, 0.1)',
+                                        color: '#ff5252',
+                                        padding: '10px',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer',
+                                        fontSize: '0.85rem',
+                                        fontWeight: 'bold',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}>
+                                        <Trash2 size={16} /> Delete Photo
+                                    </button>
+                                </form>
+                            </div>
                         </div>
+                    ))
+                ) : (
+                    <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px' }}>
+                        <p style={{ color: '#888' }}>No photos found. Start by uploading one!</p>
                     </div>
-                ))}
+                )}
             </div>
         </div>
     );

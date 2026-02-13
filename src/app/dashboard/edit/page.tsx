@@ -16,6 +16,11 @@ export default async function EditProfilePage() {
         args: [session.userId]
     });
     const userRow = result.rows[0];
+
+    // Fetch all teams for the dropdown
+    const teamsResult = await db.execute('SELECT name FROM teams ORDER BY name ASC');
+    const teams = teamsResult.rows.map(row => String(row.name));
+
     const user = {
         id: Number(userRow.id),
         full_name: String(userRow.full_name),
@@ -25,21 +30,22 @@ export default async function EditProfilePage() {
         playing_role: String(userRow.playing_role),
         experience_level: String(userRow.experience_level),
         photo_url: userRow.photo_url ? String(userRow.photo_url) : null,
+        role: String(userRow.role || 'user'),
     };
 
-    if (!user) {
+    if (!userRow) {
         redirect('/login');
     }
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h1 className={styles.title}>Edit Profile</h1>
+                <h1 className={styles.title}>✏️ Edit Profile</h1>
                 <p className={styles.subtitle}>Update your details</p>
             </div>
 
             <div style={{ maxWidth: '600px', margin: '0 auto', background: 'rgba(255,255,255,0.05)', padding: '30px', borderRadius: '12px' }}>
-                <EditProfileForm user={user} />
+                <EditProfileForm user={user} teams={teams} />
             </div>
         </div>
     );

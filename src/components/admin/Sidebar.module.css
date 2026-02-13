@@ -1,0 +1,113 @@
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: rgba(15, 15, 15, 0.95);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 0;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+.logoContainer {
+    padding: 0 30px;
+    margin-bottom: 40px;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: white;
+}
+
+.adminTag {
+    color: var(--primary-color);
+    font-size: 0.7rem;
+    background: rgba(0, 255, 136, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 15px;
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    gap: 12px;
+}
+
+.navLink:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.navLink.active {
+    background: linear-gradient(90deg, rgba(0, 255, 136, 0.15), transparent);
+    color: var(--primary-color);
+    border-left: 3px solid var(--primary-color);
+    padding-left: 12px;
+}
+
+.icon {
+    font-size: 1.2rem;
+}
+
+.name {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.footer {
+    padding: 20px 30px;
+    border-top: 1px solid var(--border-color);
+}
+
+.backLink {
+    font-size: 0.85rem;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .name,
+    .logo,
+    .footer {
+        display: none;
+    }
+
+    .nav {
+        align-items: center;
+    }
+
+    .navLink {
+        justify-content: center;
+        padding: 15px;
+    }
+}

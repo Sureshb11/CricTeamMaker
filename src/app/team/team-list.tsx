@@ -2,6 +2,15 @@
 
 import { useState } from 'react';
 import styles from './page.module.css';
+import {
+    Search,
+    UserCircle,
+    Shield,
+    PlayCircle,
+    TrendingUp,
+    Target,
+    Users
+} from 'lucide-react';
 
 export default function TeamList({ players }: { players: any[] }) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -44,31 +53,39 @@ export default function TeamList({ players }: { players: any[] }) {
                 background: 'rgba(255,255,255,0.05)',
                 padding: 'clamp(15px, 4vw, 25px)',
                 borderRadius: '12px',
-                alignItems: 'stretch'
+                alignItems: 'center'
             }}>
-                <input
-                    type="text"
-                    placeholder="Search player name..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{
-                        flex: '1 1 250px',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid #333',
-                        background: '#1a1a1a',
-                        color: 'white'
-                    }}
-                />
+                <div style={{ flex: '1 1 250px', position: 'relative' }}>
+                    <Search
+                        size={18}
+                        style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Search player name..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                            width: '100%',
+                            padding: '12px 12px 12px 40px',
+                            borderRadius: '8px',
+                            border: '1px solid #333',
+                            background: '#1a1a1a',
+                            color: 'white'
+                        }}
+                    />
+                </div>
 
                 <select
                     value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
                     className={styles.filterSelect}
                 >
-                    {uniqueRoles.map(role => (
-                        <option key={role} value={role}>{role}</option>
-                    ))}
+                    <option value="All">All Roles</option>
+                    <option value="Batsman">Batsman</option>
+                    <option value="Bowler">Bowler</option>
+                    <option value="All-Rounder">All-Rounder</option>
+                    <option value="Wicket-Keeper">Wicket-Keeper</option>
                 </select>
 
                 <select
@@ -97,9 +114,13 @@ export default function TeamList({ players }: { players: any[] }) {
                                 paddingBottom: '15px',
                                 flexWrap: 'wrap'
                             }}>
-                                {logo_url && (
+                                {logo_url ? (
                                     <div style={{ width: 'clamp(50px, 15vw, 80px)', height: 'clamp(50px, 15vw, 80px)', borderRadius: '50%', overflow: 'hidden', background: '#222', border: '2px solid var(--primary-color)', flexShrink: 0 }}>
                                         <img src={logo_url} alt={`${teamName} Logo`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    </div>
+                                ) : (
+                                    <div style={{ width: 'clamp(50px, 15vw, 80px)', height: 'clamp(50px, 15vw, 80px)', borderRadius: '50%', overflow: 'hidden', background: '#222', border: '2px solid var(--primary-color)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Shield size={32} color="var(--primary-color)" />
                                     </div>
                                 )}
                                 <h3 style={{
@@ -129,15 +150,21 @@ export default function TeamList({ players }: { players: any[] }) {
                                             </p>
                                             <div className={styles.stats}>
                                                 <div className={styles.stat}>
-                                                    <span className={styles.statLabel}>Matches</span>
+                                                    <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <PlayCircle size={12} /> Matches
+                                                    </span>
                                                     <span className={styles.statValue}>{player.matches_played || 0}</span>
                                                 </div>
                                                 <div className={styles.stat}>
-                                                    <span className={styles.statLabel}>Runs</span>
+                                                    <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <TrendingUp size={12} /> Runs
+                                                    </span>
                                                     <span className={styles.statValue}>{player.total_runs || 0}</span>
                                                 </div>
                                                 <div className={styles.stat}>
-                                                    <span className={styles.statLabel}>Wickets</span>
+                                                    <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <Target size={12} /> Wickets
+                                                    </span>
                                                     <span className={styles.statValue}>{player.total_wickets || 0}</span>
                                                 </div>
                                             </div>

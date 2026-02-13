@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { requestOtp, verifyOtp } from './actions';
 import styles from './page.module.css';
 import Link from 'next/link';
+import { Mail, Search, Hash, ShieldCheck } from 'lucide-react';
 
 const initialState = {
     error: '',
@@ -13,10 +14,6 @@ const initialState = {
 
 export default function LoginPage() {
     const [state, formAction, isPending] = useActionState(async (prev: any, formData: FormData) => {
-        // Dispatch to correct action based on hidden field or state
-        // Actually, useActionState binds to one action.
-        // We can handle this by having two different forms or a wrapper action?
-        // Wrapper action approach:
         const step = formData.get('current_step');
         if (step === 'email') {
             return requestOtp(prev, formData);
@@ -25,8 +22,7 @@ export default function LoginPage() {
         }
     }, initialState);
 
-    // We need to keep local state for inputs to persist between renders if needed, 
-    // but form actions handle this mostly.
+    const labelStyle = { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' };
 
     return (
         <div className={styles.container}>
@@ -42,7 +38,7 @@ export default function LoginPage() {
                     <form action={formAction}>
                         <input type="hidden" name="current_step" value="email" />
                         <div className={styles.formGroup}>
-                            <label htmlFor="email">Email Address</label>
+                            <label htmlFor="email" style={labelStyle}><Mail size={16} /> Email Address</label>
                             <input
                                 type="email"
                                 id="email"
@@ -52,8 +48,8 @@ export default function LoginPage() {
                                 className={styles.input}
                             />
                         </div>
-                        <button type="submit" className={styles.button} disabled={isPending}>
-                            {isPending ? 'Sending Code...' : 'Send Login Code'}
+                        <button type="submit" className={styles.button} disabled={isPending} style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                            {isPending ? 'Sending Code...' : <><Mail size={18} /> Send Login Code</>}
                         </button>
                     </form>
                 ) : (
@@ -64,7 +60,7 @@ export default function LoginPage() {
                             <p>Code sent to <strong>{state.email}</strong></p>
                         </div>
                         <div className={styles.formGroup}>
-                            <label htmlFor="otp">Enter 6-Digit Code</label>
+                            <label htmlFor="otp" style={labelStyle}><Hash size={16} /> Enter 6-Digit Code</label>
                             <input
                                 type="text"
                                 id="otp"
@@ -76,8 +72,8 @@ export default function LoginPage() {
                                 style={{ letterSpacing: '5px', textAlign: 'center', fontSize: '1.5rem' }}
                             />
                         </div>
-                        <button type="submit" className={styles.button} disabled={isPending}>
-                            {isPending ? 'Verifying...' : 'Verify & Login'}
+                        <button type="submit" className={styles.button} disabled={isPending} style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                            {isPending ? 'Verifying...' : <><ShieldCheck size={18} /> Verify & Login</>}
                         </button>
                         <button
                             type="button"
