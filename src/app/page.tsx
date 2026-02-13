@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getSession } from '@/lib/session';
 import RegisterForm from './register/register-form';
 import { Rocket, Trophy, PlayCircle, Target, User, Users, ArrowRight, Calendar } from 'lucide-react';
+import CountdownWidget from '@/components/countdown-widget';
 
 async function getLatestRegistration() {
   const result = await db.execute('SELECT * FROM registrations ORDER BY created_at DESC LIMIT 1');
@@ -52,6 +53,16 @@ export default async function Home() {
   const teams = await getTeams();
   const topScorers = await getTopScorers();
   const topWicketTakers = await getTopWicketTakers();
+
+  // Fetch Next Match
+  const nextMatchResult = await db.execute(`
+    SELECT * FROM matches 
+    WHERE (result IS NULL OR result = '') 
+    AND date >= date('now') 
+    ORDER BY date ASC 
+    LIMIT 1
+  `);
+  const nextMatch = nextMatchResult.rows[0] as any;
 
   let user = null;
   if (session) {
@@ -112,7 +123,16 @@ export default async function Home() {
           Ready for the next match?
         </p>
 
-        <div className="flex gap-4 justify-center">
+        {nextMatch && (
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '5px', color: '#fff' }}>
+              {nextMatch.home_team} vs {nextMatch.away_team}
+            </div>
+            <CountdownWidget targetDate={`${nextMatch.date}T${nextMatch.time || '00:00'}`} />
+          </div>
+        )}
+
+        <div className="flex gap-4 justify-center" style={{ marginTop: '20px' }}>
           <Link href="/dashboard" className="btn">My Dashboard</Link>
           <Link href="/team" className="btn btn-outline" style={{ marginLeft: '20px' }}>View Players</Link>
         </div>

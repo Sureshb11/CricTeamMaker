@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import styles from './page.module.css';
 import {
     Search,
@@ -134,42 +135,44 @@ export default function TeamList({ players }: { players: any[] }) {
 
                             <div className={styles.grid}>
                                 {players.map((player) => (
-                                    <div key={player.id} className={styles.playerCard}>
-                                        <div className={styles.imageContainer} style={{ background: '#1e1e1e' }}>
-                                            <img
-                                                src={player.photo_url || `https://placehold.co/400x400/1a1a1a/00ff88?text=${player.full_name?.[0] || 'P'}+${player.full_name?.split(' ')[1]?.[0] || ''}`}
-                                                alt={player.full_name}
-                                                className={styles.playerImage}
-                                            />
-                                        </div>
-                                        <div className={styles.info}>
-                                            <span className={styles.role}>{player.playing_role}</span>
-                                            <h2 className={styles.name}>{player.full_name}</h2>
-                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                                Exp: {player.experience_level}
-                                            </p>
-                                            <div className={styles.stats}>
-                                                <div className={styles.stat}>
-                                                    <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                        <PlayCircle size={12} /> Matches
-                                                    </span>
-                                                    <span className={styles.statValue}>{player.matches_played || 0}</span>
-                                                </div>
-                                                <div className={styles.stat}>
-                                                    <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                        <TrendingUp size={12} /> Runs
-                                                    </span>
-                                                    <span className={styles.statValue}>{player.total_runs || 0}</span>
-                                                </div>
-                                                <div className={styles.stat}>
-                                                    <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                                        <Target size={12} /> Wickets
-                                                    </span>
-                                                    <span className={styles.statValue}>{player.total_wickets || 0}</span>
+                                    <Link key={player.id} href={`/player/${player.id}`} style={{ textDecoration: 'none' }}>
+                                        <div className={styles.playerCard}>
+                                            <div className={styles.imageContainer} style={{ background: '#1e1e1e' }}>
+                                                <img
+                                                    src={player.photo_url || `https://placehold.co/400x400/1a1a1a/00ff88?text=${player.full_name?.[0] || 'P'}+${player.full_name?.split(' ')[1]?.[0] || ''}`}
+                                                    alt={player.full_name}
+                                                    className={styles.playerImage}
+                                                />
+                                            </div>
+                                            <div className={styles.info}>
+                                                <span className={styles.role}>{player.playing_role}</span>
+                                                <h2 className={styles.name}>{player.full_name}</h2>
+                                                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                                    Exp: {player.experience_level}
+                                                </p>
+                                                <div className={styles.stats}>
+                                                    <div className={styles.stat}>
+                                                        <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <PlayCircle size={12} /> Matches
+                                                        </span>
+                                                        <span className={styles.statValue}>{player.matches_played || 0}</span>
+                                                    </div>
+                                                    <div className={styles.stat}>
+                                                        <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <TrendingUp size={12} /> Runs
+                                                        </span>
+                                                        <span className={styles.statValue}>{player.total_runs || 0}</span>
+                                                    </div>
+                                                    <div className={styles.stat}>
+                                                        <span className={styles.statLabel} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <Target size={12} /> Wickets
+                                                        </span>
+                                                        <span className={styles.statValue}>{player.total_wickets || 0}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>

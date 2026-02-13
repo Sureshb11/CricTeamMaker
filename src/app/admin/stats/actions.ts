@@ -30,3 +30,33 @@ export async function updatePlayerStats(formData: FormData) {
         return { error: 'Failed to update stats.' };
     }
 }
+
+export async function updateBulkStats(updates: any[]) {
+    try {
+        for (const update of updates) {
+            await db.execute({
+                sql: `
+                UPDATE registrations 
+                SET matches_played = ?, total_runs = ?, total_wickets = ?, highest_score = ?, best_bowling = ?
+                WHERE id = ?
+                `,
+                args: [
+                    update.matches_played,
+                    update.total_runs,
+                    update.total_wickets,
+                    update.highest_score,
+                    update.best_bowling,
+                    update.id
+                ]
+            });
+        }
+
+        revalidatePath('/dashboard');
+        revalidatePath('/team');
+        revalidatePath('/admin/stats');
+        return { success: true };
+    } catch (error) {
+        console.error('Bulk update error:', error);
+        return { error: 'Failed to update bulk stats.' };
+    }
+}

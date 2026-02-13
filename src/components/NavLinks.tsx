@@ -9,7 +9,8 @@ import {
     Trophy,
     Image as ImageIcon,
     LogIn,
-    UserPlus
+    UserPlus,
+    ArrowRightLeft
 } from 'lucide-react';
 
 interface NavLinksProps {
@@ -33,6 +34,7 @@ export default function NavLinks({ session, user }: NavLinksProps) {
             <ul className={`${styles.navLinks} ${isOpen ? styles.navLinksActive : ''}`}>
                 <li><Link href="/" className={styles.navLink} onClick={closeMenu} style={linkStyle}><Home size={18} /> Home</Link></li>
                 <li><Link href="/team" className={styles.navLink} onClick={closeMenu} style={linkStyle}><Users size={18} /> Our Teams</Link></li>
+                <li><Link href="/compare" className={styles.navLink} onClick={closeMenu} style={linkStyle}><ArrowRightLeft size={18} /> Compare</Link></li> {/* Added Compare link */}
                 <li><Link href="/matches" className={styles.navLink} onClick={closeMenu} style={linkStyle}><Trophy size={18} /> Matches</Link></li>
                 <li><Link href="/gallery" className={styles.navLink} onClick={closeMenu} style={linkStyle}><ImageIcon size={18} /> Gallery</Link></li>
                 {session ? (

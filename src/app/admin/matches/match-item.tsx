@@ -2,11 +2,14 @@
 
 import { useState } from 'react';
 import { updateMatchResult, deleteMatch } from './actions';
-import { Save, Edit2, Trash2, Calendar, MapPin } from 'lucide-react';
+import Link from 'next/link';
+import { Save, Edit2, Trash2, Calendar, MapPin, CheckCircle, Clock, Activity } from 'lucide-react';
+import { formatTime12Hour } from '@/lib/utils';
 
 export default function MatchItem({ match }: { match: any }) {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     if (isEditing) {
         return (
@@ -33,7 +36,11 @@ export default function MatchItem({ match }: { match: any }) {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' }}>
                         <div>
                             <label style={labelStyle}>Date</label>
-                            <input name="date" defaultValue={match.date} style={inputStyle} />
+                            <input type="date" name="date" defaultValue={match.date} style={inputStyle} />
+                        </div>
+                        <div>
+                            <label style={labelStyle}>Time</label>
+                            <input type="time" name="time" defaultValue={match.time || '14:00'} style={inputStyle} />
                         </div>
                         <div>
                             <label style={labelStyle}>Venue</label>
@@ -85,6 +92,7 @@ export default function MatchItem({ match }: { match: any }) {
                 </div>
                 <div style={{ color: '#666', fontSize: '0.9rem', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {match.date}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> {match.time ? formatTime12Hour(match.time) : 'TBD'}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {match.venue}</span>
                 </div>
                 {match.score && (
@@ -102,18 +110,38 @@ export default function MatchItem({ match }: { match: any }) {
                 )}
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-                <button onClick={() => setIsEditing(true)} style={editBtnStyle}>
-                    <Edit2 size={16} />
+            <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                <Link href={`/admin/matches/${match.id}/scorecard`} style={{ ...actionBtn, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <Activity size={14} /> Scorecard
+                </Link>
+                <button onClick={() => setIsEditing(true)} style={actionBtn}>
+                    <Edit2 size={14} /> Edit
                 </button>
 
-                <form action={async () => {
-                    if (confirm('Delete this match?')) await deleteMatch(match.id);
-                }}>
-                    <button style={deleteBtnStyle}>
-                        <Trash2 size={16} />
+                {isDeleting ? (
+                    <div style={{ display: 'flex', gap: '5px', alignItems: 'center', background: 'rgba(255, 82, 82, 0.1)', padding: '4px 8px', borderRadius: '6px' }}>
+                        <span style={{ fontSize: '0.8rem', color: '#ff5252', marginRight: '4px' }}>Sure?</span>
+                        <button
+                            onClick={async () => {
+                                setIsDeleting(false); // Optimistic UI
+                                await deleteMatch(match.id);
+                            }}
+                            style={{ ...actionBtn, background: '#ff5252', color: 'white', borderColor: '#ff5252', padding: '4px 8px', fontSize: '0.8rem' }}
+                        >
+                            Yes
+                        </button>
+                        <button
+                            onClick={() => setIsDeleting(false)}
+                            style={{ ...actionBtn, padding: '4px 8px', fontSize: '0.8rem' }}
+                        >
+                            No
+                        </button>
+                    </div>
+                ) : (
+                    <button onClick={() => setIsDeleting(true)} style={{ ...actionBtn, color: '#ff5252', borderColor: 'rgba(255, 82, 82, 0.3)' }}>
+                        <Trash2 size={14} /> Delete
                     </button>
-                </form>
+                )}
             </div>
         </div>
     );
@@ -158,20 +186,16 @@ const cancelBtnStyle = {
     fontSize: '0.9rem',
 };
 
-const editBtnStyle = {
-    background: 'rgba(0, 255, 136, 0.05)',
-    border: '1px solid rgba(0, 255, 136, 0.1)',
-    color: 'var(--primary-color)',
+const actionBtn = {
+    background: 'rgba(255,255,255,0.05)',
+    color: '#ccc',
+    border: '1px solid rgba(255,255,255,0.1)',
     padding: '8px 12px',
-    borderRadius: '8px',
+    borderRadius: '6px',
     cursor: 'pointer',
-};
-
-const deleteBtnStyle = {
-    background: 'rgba(255, 82, 82, 0.05)',
-    border: '1px solid rgba(255, 82, 82, 0.1)',
-    color: '#ff5252',
-    padding: '8px 12px',
-    borderRadius: '8px',
-    cursor: 'pointer',
+    fontSize: '0.85rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    transition: 'all 0.2s',
 };

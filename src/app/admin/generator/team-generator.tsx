@@ -26,6 +26,7 @@ export default function TeamGenerator({ players, availableTeams }: { players: an
     const [isShuffling, setIsShuffling] = useState(false);
     const [revealedCount, setRevealedCount] = useState(0);
     const [isRevealing, setIsRevealing] = useState(false);
+    const [smartShuffle, setSmartShuffle] = useState(false);
     const [isAllRevealed, setIsAllRevealed] = useState(false);
 
     // Initialize defaults or handle custom names
@@ -57,14 +58,69 @@ export default function TeamGenerator({ players, availableTeams }: { players: an
         setGenerated(false);
         setRevealedCount(0);
 
-        // Simulate shuffle time for fun
         setTimeout(() => {
-            const shuffled = [...selectedPlayers].sort(() => Math.random() - 0.5);
-            const newTeams: any[][] = Array.from({ length: teamCount }, () => []);
-            shuffled.forEach((playerId, index) => {
-                const player = players.find(p => p.id === playerId);
-                newTeams[index % teamCount].push(player);
-            });
+            let newTeams: any[][] = Array.from({ length: teamCount }, () => []);
+
+            if (smartShuffle) {
+                // Smart Shuffle Logic
+                // 1. Filter mutually exclusive groups to prevent duplicates
+                const pool = selectedPlayers.map(id => players.find(p => p.id === id)).filter(Boolean);
+
+                // Priority 1: All-Rounders
+                const allRounders = pool.filter(p => p.playing_role?.toLowerCase().includes('all'));
+
+                // Priority 2: Batters & Keepers (Excluding already selected All-Rounders)
+                const batters = pool.filter(p =>
+                    !allRounders.includes(p) &&
+                    (p.playing_role?.toLowerCase().includes('bat') || p.playing_role?.toLowerCase().includes('keeper'))
+                );
+
+                // Priority 3: Bowlers (Excluding All-Rounders and Batters)
+                const bowlers = pool.filter(p =>
+                    !allRounders.includes(p) &&
+                    !batters.includes(p) &&
+                    p.playing_role?.toLowerCase().includes('bowl')
+                );
+
+                // Priority 4: Everyone else
+                const others = pool.filter(p =>
+                    !allRounders.includes(p) &&
+                    !batters.includes(p) &&
+                    !bowlers.includes(p)
+                );
+
+                // Shuffle groups internally
+                const shuffle = (arr: any[]) => arr.sort(() => Math.random() - 0.5);
+                shuffle(batters);
+                shuffle(allRounders);
+                shuffle(bowlers);
+                shuffle(others);
+
+                // Distribute round-robin maintaining teamIndex state
+                let teamIndex = 0;
+                const distribute = (group: any[]) => {
+                    group.forEach(p => {
+                        newTeams[teamIndex].push(p);
+                        teamIndex = (teamIndex + 1) % teamCount;
+                    });
+                };
+
+                // Distribute in order of importance
+                distribute(allRounders);
+                distribute(batters);
+                distribute(bowlers);
+                distribute(others);
+
+                // Shuffle internal team order so roles aren't just sorted by type
+                newTeams.forEach(team => shuffle(team));
+            } else {
+                // Random Shuffle
+                const shuffled = [...selectedPlayers].sort(() => Math.random() - 0.5);
+                shuffled.forEach((playerId, index) => {
+                    const player = players.find(p => p.id === playerId);
+                    newTeams[index % teamCount].push(player);
+                });
+            }
 
             const currentNames = [...teamNames];
             for (let i = 0; i < teamCount; i++) {
@@ -172,6 +228,35 @@ export default function TeamGenerator({ players, availableTeams }: { players: an
                             </select>
                         </div>
                     ))}
+                </div>
+
+                <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '8px' }}>
+                    <div
+                        onClick={() => setSmartShuffle(!smartShuffle)}
+                        style={{
+                            width: '40px',
+                            height: '20px',
+                            background: smartShuffle ? 'var(--primary-color)' : '#333',
+                            borderRadius: '20px',
+                            position: 'relative',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s'
+                        }}
+                    >
+                        <div style={{
+                            width: '16px',
+                            height: '16px',
+                            background: 'white',
+                            borderRadius: '50%',
+                            position: 'absolute',
+                            top: '2px',
+                            left: smartShuffle ? '22px' : '2px',
+                            transition: 'all 0.3s'
+                        }}></div>
+                    </div>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>
+                        Smart Shuffle <span style={{ color: '#888', fontWeight: 'normal', fontSize: '0.8rem' }}>(Balance roles)</span>
+                    </span>
                 </div>
 
                 <button onClick={generateTeams} style={{ ...primaryBtn, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>

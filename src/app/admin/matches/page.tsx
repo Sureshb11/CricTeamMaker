@@ -1,12 +1,24 @@
 import db from '@/lib/db';
-import { addMatch } from './actions';
+// import { addMatch } from './actions'; // No longer needed here
+import AddMatchForm from './add-match-form';
 import styles from '@/app/register/page.module.css';
 import MatchItem from './match-item';
-import { Trophy, Calendar, MapPin, Shield, Plus } from 'lucide-react';
+import { Trophy, Calendar, MapPin, Shield, Plus, Clock } from 'lucide-react';
 
 async function getMatches() {
     const result = await db.execute('SELECT * FROM matches ORDER BY date DESC');
-    return result.rows as any[];
+    return result.rows.map((row: any) => ({
+        id: Number(row.id),
+        opponent: String(row.opponent || ''),
+        date: String(row.date),
+        time: row.time ? String(row.time) : null,
+        venue: String(row.venue),
+        result: row.result ? String(row.result) : null,
+        score: row.score ? String(row.score) : null,
+        home_team: String(row.home_team || ''),
+        away_team: String(row.away_team || ''),
+        created_at: String(row.created_at)
+    }));
 }
 
 export default async function ManageMatches() {
@@ -27,44 +39,7 @@ export default async function ManageMatches() {
                 <h2 style={{ marginBottom: '25px', color: 'var(--primary-color)', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Plus size={20} /> Add New Match
                 </h2>
-                <form action={async (formData) => {
-                    'use server';
-                    await addMatch(formData);
-                }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label} style={labelStyle}>
-                                <Calendar size={14} /> Date
-                            </label>
-                            <input type="text" name="date" className={styles.input} placeholder="e.g. Oct 25, 2024" required />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label} style={labelStyle}>
-                                <MapPin size={14} /> Venue
-                            </label>
-                            <input type="text" name="venue" className={styles.input} placeholder="e.g. Green Park Stadium" required />
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label} style={labelStyle}>
-                                <Shield size={14} /> Home Team
-                            </label>
-                            <input type="text" name="home_team" className={styles.input} defaultValue="DVS TEAM" />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label} style={labelStyle}>
-                                <Shield size={14} /> Away Team / Opponent
-                            </label>
-                            <input type="text" name="away_team" className={styles.input} placeholder="e.g. Rogue XI" required />
-                        </div>
-                    </div>
-
-                    <button type="submit" className={styles.button} style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
-                        <Plus size={18} /> Add Match
-                    </button>
-                </form>
+                <AddMatchForm />
             </div>
 
             {/* List Matches */}

@@ -19,7 +19,10 @@ export default async function Navbar() {
             <Link href="/" className={styles.logo}>
                 DVS
             </Link>
-            <NavLinks session={session} user={user} />
+            <NavLinks
+                session={session ? { ...session, expiresAt: new Date(session.expiresAt).toISOString() } : null}
+                user={user ? { full_name: user.full_name } : null}
+            />
         </nav>
     );
 }

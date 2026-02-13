@@ -1,15 +1,29 @@
 import db from '@/lib/db';
 import styles from '@/app/register/page.module.css';
 import DeletePlayerButton from './delete-button';
-import { User, Shield, ShieldCheck, Phone, Settings } from 'lucide-react';
+import { getSession } from '@/lib/session';
+import { toggleAdminRole } from './actions';
+import { User, Shield, ShieldCheck, Phone, Settings, UserPlus, UserMinus, Crown } from 'lucide-react';
 
 async function getPlayers() {
     const result = await db.execute('SELECT * FROM registrations ORDER BY id DESC');
     return result.rows as any[];
 }
 
+async function getCurrentUser() {
+    const session = await getSession();
+    if (!session) return null;
+    const result = await db.execute({
+        sql: 'SELECT role FROM registrations WHERE id = ?',
+        args: [session.userId]
+    });
+    return result.rows[0] as any;
+}
+
 export default async function ManagePlayers() {
     const players = await getPlayers();
+    const currentUser = await getCurrentUser();
+    const isSuperAdmin = currentUser?.role === 'super_admin';
 
     return (
         <div>
@@ -78,9 +92,15 @@ export default async function ManagePlayers() {
                                                 )}
                                             </div>
                                             <div>
-                                                <div style={{ fontWeight: '600' }}>{player.full_name}</div>
+                                                <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    {player.full_name}
+                                                    {player.role === 'super_admin' && <Crown size={12} color="#FFD700" fill="#FFD700" />}
+                                                </div>
                                                 {player.role === 'admin' && (
                                                     <span style={{ fontSize: '0.65rem', background: 'var(--primary-color)', color: 'black', padding: '1px 5px', borderRadius: '3px', fontWeight: 'bold' }}>ADMIN</span>
+                                                )}
+                                                {player.role === 'super_admin' && (
+                                                    <span style={{ fontSize: '0.65rem', background: 'linear-gradient(45deg, #FFD700, #FFA500)', color: 'black', padding: '1px 5px', borderRadius: '3px', fontWeight: 'bold' }}>SUPER USER</span>
                                                 )}
                                             </div>
                                         </div>
@@ -94,7 +114,36 @@ export default async function ManagePlayers() {
                                         <div style={{ fontSize: '0.8rem', color: '#555' }}>{player.phone}</div>
                                     </td>
                                     <td style={tdStyle}>
-                                        <DeletePlayerButton id={player.id} disabled={player.role === 'admin'} />
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            {isSuperAdmin && player.role !== 'super_admin' && (
+                                                <form action={async () => {
+                                                    'use server';
+                                                    await toggleAdminRole(player.id);
+                                                }}>
+                                                    <button
+                                                        title={player.role === 'admin' ? "Remove Admin" : "Make Admin"}
+                                                        style={{
+                                                            background: 'none',
+                                                            border: 'none',
+                                                            cursor: 'pointer',
+                                                            color: player.role === 'admin' ? '#ff4444' : 'var(--primary-color)',
+                                                            padding: '4px'
+                                                        }}
+                                                    >
+                                                        {player.role === 'admin' ? <UserMinus size={16} /> : <UserPlus size={16} />}
+                                                    </button>
+                                                </form>
+                                            )}
+
+                                            {/* Disable delete for Super Admin target, or if current user is not Super Admin trying to delete Admin */}
+                                            <DeletePlayerButton
+                                                id={player.id}
+                                                disabled={
+                                                    player.role === 'super_admin' ||
+                                                    (player.role === 'admin' && !isSuperAdmin)
+                                                }
+                                            />
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

@@ -1,6 +1,7 @@
 import styles from './page.module.css';
 import db from '@/lib/db';
-import { PlayCircle, MapPin } from 'lucide-react';
+import { PlayCircle, MapPin, Clock } from 'lucide-react';
+import { formatTime12Hour } from '@/lib/utils';
 
 async function getMatches() {
     const result = await db.execute('SELECT * FROM matches ORDER BY date DESC');
@@ -17,7 +18,12 @@ export default async function MatchesPage() {
     const renderMatch = (match: any) => (
         <div key={match.id} className={styles.matchCard}>
             <div className={styles.matchInfo}>
-                <span className={styles.date}>{match.date}</span>
+                <div className={styles.datetime} style={{ display: 'flex', alignItems: 'center', gap: '15px', color: 'var(--primary-color)', fontWeight: 'bold', marginBottom: '10px' }}>
+                    <span className={styles.date}>{match.date}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem', color: '#ccc' }}>
+                        <Clock size={14} /> {match.time ? formatTime12Hour(match.time) : 'TBD'}
+                    </span>
+                </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                     <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>
                         {match.home_team || 'D-Vigo-S XI'}
@@ -27,7 +33,13 @@ export default async function MatchesPage() {
                         {match.away_team || match.opponent}
                     </span>
                 </div>
-                <div className={styles.venue}>
+                <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(match.venue)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.venue}
+                    style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                >
                     <span className={styles.icon} style={{ display: 'flex', alignItems: 'center' }}>
                         <MapPin size={16} color="var(--primary-color)" />
                     </span>
@@ -41,7 +53,7 @@ export default async function MatchesPage() {
                             </span>
                         )}
                     </div>
-                </div>
+                </a>
             </div>
             <div className={styles.result}>
                 {match.result ? (
