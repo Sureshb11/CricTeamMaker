@@ -17,6 +17,7 @@ export async function updateProfile(prevState: any, formData: FormData) {
     }
 
     const phone = formData.get('phone') as string;
+    const full_name = formData.get('full_name') as string;
     const playing_role = formData.get('playing_role') as string;
     const experience_level = formData.get('experience_level') as string;
     const team_name = formData.get('team_name') as string;
@@ -58,6 +59,11 @@ export async function updateProfile(prevState: any, formData: FormData) {
         if (isAdmin && team_name) {
             sql += ', team_name = ?';
             args.push(team_name);
+        }
+
+        if (isAdmin && full_name) {
+            sql += ', full_name = ?';
+            args.push(full_name);
         }
 
         sql += ' WHERE id = ?';

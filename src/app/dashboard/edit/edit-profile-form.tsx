@@ -20,17 +20,30 @@ export default function EditProfileForm({ user, teams }: { user: any, teams: str
             )}
 
             <div className={styles.formGroup}>
-                <label className={styles.label} style={labelStyle}>
+                <label htmlFor="full_name" className={styles.label} style={labelStyle}>
                     <User size={16} /> Full Name
                 </label>
-                <input
-                    type="text"
-                    className={styles.input}
-                    value={user.full_name}
-                    disabled
-                    style={{ opacity: 0.6, cursor: 'not-allowed' }}
-                />
-                <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>Name cannot be changed.</small>
+                {isAdmin ? (
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        className={styles.input}
+                        defaultValue={user.full_name}
+                        required
+                    />
+                ) : (
+                    <>
+                        <input
+                            type="text"
+                            className={styles.input}
+                            value={user.full_name}
+                            disabled
+                            style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                        />
+                        <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>Name cannot be changed.</small>
+                    </>
+                )}
             </div>
 
             <div className={styles.formGroup}>
