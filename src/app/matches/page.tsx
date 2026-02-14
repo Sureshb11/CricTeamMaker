@@ -1,10 +1,11 @@
 import styles from './page.module.css';
 import db from '@/lib/db';
+import Link from 'next/link';
 import { PlayCircle, MapPin, Clock } from 'lucide-react';
 import { formatTime12Hour } from '@/lib/utils';
 
 async function getMatches() {
-    const result = await db.execute('SELECT * FROM matches ORDER BY date DESC');
+    const result = await db.execute('SELECT *, status FROM matches ORDER BY date DESC');
     return result.rows as any[];
 }
 
@@ -54,6 +55,23 @@ export default async function MatchesPage() {
                         )}
                     </div>
                 </a>
+
+                {/* Live Match Indicator */}
+                {match.status === 'live' && (
+                    <div style={{ marginTop: '15px' }}>
+                        <Link href={`/matches/live/${match.id}`} style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '8px',
+                            background: 'rgba(255, 0, 0, 0.15)', color: '#ff4444',
+                            padding: '6px 12px', borderRadius: '20px',
+                            textDecoration: 'none', fontWeight: 'bold', border: '1px solid rgba(255,0,0,0.3)',
+                            fontSize: '0.85rem',
+                            animation: 'pulse 2s infinite'
+                        }}>
+                            <div style={{ width: '6px', height: '6px', background: '#ff4444', borderRadius: '50%' }}></div>
+                            LIVE SCORE
+                        </Link>
+                    </div>
+                )}
             </div>
             <div className={styles.result}>
                 {match.result ? (

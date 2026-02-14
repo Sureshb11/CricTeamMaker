@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { updateMatchResult, deleteMatch } from './actions';
 import Link from 'next/link';
-import { Save, Edit2, Trash2, Calendar, MapPin, CheckCircle, Clock, Activity } from 'lucide-react';
+import { Save, Edit2, Trash2, Calendar, MapPin, CheckCircle, Clock, Activity, PlayCircle } from 'lucide-react';
 import { formatTime12Hour } from '@/lib/utils';
 
 export default function MatchItem({ match }: { match: any }) {
@@ -111,8 +111,8 @@ export default function MatchItem({ match }: { match: any }) {
             </div>
 
             <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                <Link href={`/admin/matches/${match.id}/scorecard`} style={{ ...actionBtn, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <Activity size={14} /> Scorecard
+                <Link href={`/admin/matches/${match.id}/scorecard`} style={{ ...actionBtn, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px', borderColor: 'var(--primary-color)', color: 'var(--primary-color)' }}>
+                    <PlayCircle size={14} /> Live Scorer
                 </Link>
                 <button onClick={() => setIsEditing(true)} style={actionBtn}>
                     <Edit2 size={14} /> Edit

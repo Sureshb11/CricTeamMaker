@@ -44,6 +44,14 @@ export async function addMatch(formData: FormData) {
 
 export async function deleteMatch(id: number) {
     try {
+        console.log('Deleting match', id);
+        // Delete related data first (Manual Cascade)
+        await db.execute({ sql: 'DELETE FROM deliveries WHERE match_id = ?', args: [id] });
+        await db.execute({ sql: 'DELETE FROM player_performances WHERE match_id = ?', args: [id] });
+        await db.execute({ sql: 'DELETE FROM innings WHERE match_id = ?', args: [id] });
+        await db.execute({ sql: 'DELETE FROM match_performances WHERE match_id = ?', args: [id] }); // Legacy/Manual scorecard
+
+        // Finally delete match
         await db.execute({
             sql: 'DELETE FROM matches WHERE id = ?',
             args: [id]

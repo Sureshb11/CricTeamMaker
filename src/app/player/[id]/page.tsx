@@ -12,15 +12,41 @@ async function getPlayer(id: string) {
     return result.rows[0];
 }
 
-async function getRecentMatches(playerId: string) {
+async function getLiveStats(playerId: string) {
     const result = await db.execute({
         sql: `
         SELECT 
-            mp.*, 
-            m.date, m.opponent, m.venue, m.result, m.home_team, m.away_team
-        FROM match_performances mp
-        JOIN matches m ON mp.match_id = m.id
-        WHERE mp.player_id = ?
+            COUNT(DISTINCT match_id) as matches_played,
+            SUM(runs_scored) as total_runs,
+            SUM(wickets_taken) as total_wickets,
+            MAX(runs_scored) as highest_score
+        FROM player_performances
+        WHERE player_id = ?
+        `,
+        args: [playerId]
+    });
+    return result.rows[0];
+}
+
+async function getRecentMatches(playerId: string) {
+    // We group by match_id to combine batting and bowling per match if they happened in different records (unlikely with upsert but possible if separate innings)
+    // Actually our actions.ts uses (match_id, player_id, inning_id) as unique constraints.
+    // So a player might have 2 records per match (2 innings?).
+    // For simplicity, let's just fetch the matches and aggregate in JS or simple query.
+    // Or just show batting for now.
+
+    const result = await db.execute({
+        sql: `
+        SELECT 
+            m.id as match_id, m.date, m.opponent, m.venue, m.result, m.home_team, m.away_team,
+            SUM(pp.runs_scored) as runs_scored,
+            SUM(pp.balls_faced) as balls_faced,
+            SUM(pp.wickets_taken) as wickets_taken,
+            SUM(pp.runs_conceded) as runs_conceded
+        FROM player_performances pp
+        JOIN matches m ON pp.match_id = m.id
+        WHERE pp.player_id = ?
+        GROUP BY m.id
         ORDER BY m.date DESC
         LIMIT 5
         `,
@@ -32,7 +58,14 @@ async function getRecentMatches(playerId: string) {
 export default async function PlayerProfile({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const player = await getPlayer(id) as any;
+    const liveStats = await getLiveStats(id) as any;
     const recentMatches = await getRecentMatches(id) as any[];
+
+    // Merge Stats
+    const totalMatches = (player.matches_played || 0) + (liveStats.matches_played || 0);
+    const totalRuns = (player.total_runs || 0) + (liveStats.total_runs || 0);
+    const totalWickets = (player.total_wickets || 0) + (liveStats.total_wickets || 0);
+    const highestScore = Math.max(player.highest_score || 0, liveStats.highest_score || 0);
 
     if (!player) return <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>Player not found</div>;
 
@@ -76,10 +109,10 @@ export default async function PlayerProfile({ params }: { params: Promise<{ id: 
                 <Activity size={24} color="var(--primary-color)" /> Career Statistics
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '15px', marginBottom: '40px' }}>
-                <StatBox label="Matches" value={player.matches_played || 0} icon={<PlayCircle size={20} />} />
-                <StatBox label="Runs" value={player.total_runs || 0} icon={<Hash size={20} />} />
-                <StatBox label="Wickets" value={player.total_wickets || 0} icon={<Target size={20} />} />
-                <StatBox label="High Score" value={player.highest_score || 0} icon={<Flame size={20} />} />
+                <StatBox label="Matches" value={totalMatches} icon={<PlayCircle size={20} />} />
+                <StatBox label="Runs" value={totalRuns} icon={<Hash size={20} />} />
+                <StatBox label="Wickets" value={totalWickets} icon={<Target size={20} />} />
+                <StatBox label="High Score" value={highestScore} icon={<Flame size={20} />} />
                 <StatBox label="Best Bowl" value={player.best_bowling || '-'} icon={<Award size={20} />} />
             </div>
 
@@ -91,7 +124,7 @@ export default async function PlayerProfile({ params }: { params: Promise<{ id: 
                     </h2>
                     <div className="card" style={{ padding: 0 }}>
                         {recentMatches.map((match, index) => (
-                            <div key={match.id} style={{
+                            <div key={match.match_id} style={{
                                 padding: '15px 20px',
                                 borderBottom: index < recentMatches.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                                 display: 'flex',
