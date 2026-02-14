@@ -16,10 +16,24 @@ export async function uploadGalleryImage(formData: FormData) {
 
     let image_url = '';
     try {
-        image_url = await uploadToCloudinary(file, 'gallery');
+        // Fallback to local storage if Cloudinary is not configured or fails
+        if (!process.env.CLOUDINARY_API_KEY) {
+            const savedPath = await saveFile(file, 'gallery');
+            if (!savedPath) throw new Error('Failed to save file locally');
+            image_url = savedPath;
+        } else {
+            image_url = await uploadToCloudinary(file, 'gallery');
+        }
     } catch (error) {
         console.error('Upload error:', error);
-        return { error: 'Failed to upload image to Cloud.' };
+        // Try local save as final fallback
+        try {
+            const savedPath = await saveFile(file, 'gallery');
+            if (savedPath) image_url = savedPath;
+            else return { error: 'Failed to upload image.' };
+        } catch (e) {
+            return { error: 'Failed to upload image.' };
+        }
     }
 
     if (!image_url) {
